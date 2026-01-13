@@ -94,7 +94,7 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 RESEND_API_KEY=your_resend_api_key
-EMAIL_TO=priyanshupriyacodes@gmail.com
+
 ```
 
 > These keys are used to connect the website to Supabase and send email notifications.
