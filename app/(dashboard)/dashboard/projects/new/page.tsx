@@ -1,0 +1,422 @@
+'use client';
+
+import { useFormStatus } from 'react-dom';
+import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowLeft, Loader2, Upload, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { createProject } from '../actions';
+import { PROJECT_TYPE_OPTIONS, PROJECT_STATUS_OPTIONS, PROJECT_ROLE_OPTIONS } from '@/types/project';
+
+function SubmitButton() {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button
+            type="submit"
+            disabled={pending}
+            className="bg-indigo-600 hover:bg-indigo-500 w-full sm:w-auto"
+        >
+            {pending ? (
+                <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Creating...
+                </>
+            ) : (
+                'Create Project'
+            )}
+        </Button>
+    );
+}
+
+export default function NewProjectPage() {
+    const [preview, setPreview] = useState<string | null>(null);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const clearImage = () => {
+        setPreview(null);
+        const input = document.getElementById('thumbnail') as HTMLInputElement;
+        if (input) input.value = '';
+    };
+
+    return (
+        <div className="max-w-3xl mx-auto">
+            {/* Back Link */}
+            <Link
+                href="/dashboard/projects"
+                className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors mb-8"
+            >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Projects
+            </Link>
+
+            {/* Header */}
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-white">New Project</h1>
+                <p className="text-slate-400 mt-1">
+                    Add a new project to your portfolio.
+                </p>
+            </div>
+
+            {/* Form */}
+            <form action={createProject} className="space-y-8">
+
+                {/* ===== SECTION: Basic Info ===== */}
+                <div className="space-y-6">
+                    <h2 className="text-lg font-semibold text-white border-b border-slate-800 pb-2">
+                        Basic Information
+                    </h2>
+
+                    {/* Title & Slug Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="title" className="text-slate-300">
+                                Title <span className="text-rose-400">*</span>
+                            </Label>
+                            <Input
+                                id="title"
+                                name="title"
+                                type="text"
+                                required
+                                placeholder="My Awesome Project"
+                                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="slug" className="text-slate-300">
+                                Slug <span className="text-rose-400">*</span>
+                            </Label>
+                            <Input
+                                id="slug"
+                                name="slug"
+                                type="text"
+                                required
+                                placeholder="my-awesome-project"
+                                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                            />
+                            <p className="text-xs text-slate-500">URL-friendly identifier</p>
+                        </div>
+                    </div>
+
+                    {/* Summary */}
+                    <div className="space-y-2">
+                        <Label htmlFor="summary" className="text-slate-300">
+                            Summary <span className="text-rose-400">*</span>
+                        </Label>
+                        <Textarea
+                            id="summary"
+                            name="summary"
+                            required
+                            rows={2}
+                            maxLength={150}
+                            placeholder="A brief, outcome-focused description (max 150 chars)..."
+                            className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500 resize-none"
+                        />
+                    </div>
+
+                    {/* Content/Description */}
+                    <div className="space-y-2">
+                        <Label htmlFor="content" className="text-slate-300">
+                            Description <span className="text-slate-500">(Markdown supported)</span>
+                        </Label>
+                        <Textarea
+                            id="content"
+                            name="content"
+                            rows={6}
+                            placeholder="Write a detailed description of your project. You can use Markdown formatting..."
+                            className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500 resize-none"
+                        />
+                    </div>
+
+                    {/* Type, Status, Role Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="project_type" className="text-slate-300">
+                                Project Type
+                            </Label>
+                            <Select name="project_type">
+                                <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
+                                    <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-900 border-slate-700">
+                                    {PROJECT_TYPE_OPTIONS.map((type) => (
+                                        <SelectItem key={type} value={type} className="text-white hover:bg-slate-800">
+                                            {type}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="status" className="text-slate-300">
+                                Status
+                            </Label>
+                            <Select name="status" defaultValue="Completed">
+                                <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
+                                    <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-900 border-slate-700">
+                                    {PROJECT_STATUS_OPTIONS.map((status) => (
+                                        <SelectItem key={status} value={status} className="text-white hover:bg-slate-800">
+                                            {status}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="role" className="text-slate-300">
+                                Role
+                            </Label>
+                            <Select name="role">
+                                <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
+                                    <SelectValue placeholder="Select role" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-900 border-slate-700">
+                                    {PROJECT_ROLE_OPTIONS.map((role) => (
+                                        <SelectItem key={role} value={role} className="text-white hover:bg-slate-800">
+                                            {role}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
+                    {/* Display Date & Tech Stack */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="display_date" className="text-slate-300">
+                                Project Date
+                            </Label>
+                            <Input
+                                id="display_date"
+                                name="display_date"
+                                type="date"
+                                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                            />
+                            <p className="text-xs text-slate-500">When the project was created/completed</p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="tech_stack" className="text-slate-300">
+                                Tech Stack
+                            </Label>
+                            <Input
+                                id="tech_stack"
+                                name="tech_stack"
+                                type="text"
+                                placeholder="Next.js, Supabase, TailwindCSS"
+                                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                            />
+                            <p className="text-xs text-slate-500">Comma separated</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ===== SECTION: Links ===== */}
+                <div className="space-y-6">
+                    <h2 className="text-lg font-semibold text-white border-b border-slate-800 pb-2">
+                        Links
+                    </h2>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="github_url" className="text-slate-300">
+                                GitHub URL
+                            </Label>
+                            <Input
+                                id="github_url"
+                                name="github_url"
+                                type="url"
+                                placeholder="https://github.com/..."
+                                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="live_url" className="text-slate-300">
+                                Live URL
+                            </Label>
+                            <Input
+                                id="live_url"
+                                name="live_url"
+                                type="url"
+                                placeholder="https://..."
+                                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="demo_url" className="text-slate-300">
+                                Demo URL
+                            </Label>
+                            <Input
+                                id="demo_url"
+                                name="demo_url"
+                                type="url"
+                                placeholder="https://demo...."
+                                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="docs_url" className="text-slate-300">
+                                Documentation URL
+                            </Label>
+                            <Input
+                                id="docs_url"
+                                name="docs_url"
+                                type="url"
+                                placeholder="https://docs...."
+                                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                            />
+                        </div>
+
+                        <div className="space-y-2 sm:col-span-2">
+                            <Label htmlFor="linkedin_post_url" className="text-slate-300">
+                                LinkedIn Post URL
+                            </Label>
+                            <Input
+                                id="linkedin_post_url"
+                                name="linkedin_post_url"
+                                type="url"
+                                placeholder="https://linkedin.com/posts/..."
+                                className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* ===== SECTION: Thumbnail ===== */}
+                <div className="space-y-6">
+                    <h2 className="text-lg font-semibold text-white border-b border-slate-800 pb-2">
+                        Thumbnail
+                    </h2>
+
+                    <div className="space-y-4">
+                        {preview ? (
+                            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-slate-800">
+                                <Image
+                                    src={preview}
+                                    alt="Preview"
+                                    fill
+                                    className="object-cover"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={clearImage}
+                                    className="absolute top-2 right-2 p-1 rounded-full bg-slate-900/80 text-white hover:bg-slate-900 transition-colors"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        ) : (
+                            <label
+                                htmlFor="thumbnail"
+                                className="flex flex-col items-center justify-center w-full aspect-video rounded-lg border-2 border-dashed border-slate-700 hover:border-slate-600 cursor-pointer transition-colors bg-slate-900/50"
+                            >
+                                <Upload className="w-8 h-8 text-slate-500 mb-2" />
+                                <span className="text-sm text-slate-400">Click to upload image</span>
+                                <span className="text-xs text-slate-500 mt-1">PNG, JPG, WebP up to 10MB</span>
+                            </label>
+                        )}
+                        <input
+                            id="thumbnail"
+                            name="thumbnail"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="hidden"
+                        />
+                    </div>
+                </div>
+
+                {/* ===== SECTION: Settings ===== */}
+                <div className="space-y-6">
+                    <h2 className="text-lg font-semibold text-white border-b border-slate-800 pb-2">
+                        Settings
+                    </h2>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {/* Featured */}
+                        <div className="flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                id="is_featured"
+                                name="is_featured"
+                                className="w-5 h-5 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-950"
+                            />
+                            <Label
+                                htmlFor="is_featured"
+                                className="text-slate-400 font-normal cursor-pointer"
+                            >
+                                Feature this project
+                            </Label>
+                        </div>
+
+                        {/* Published */}
+                        <div className="flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                id="is_published"
+                                name="is_published"
+                                defaultChecked
+                                className="w-5 h-5 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-950"
+                            />
+                            <Label
+                                htmlFor="is_published"
+                                className="text-slate-400 font-normal cursor-pointer"
+                            >
+                                Publish immediately
+                            </Label>
+                        </div>
+                    </div>
+
+                    {/* Created Date (Optional) */}
+                    <div className="space-y-2">
+                        <Label htmlFor="created_at" className="text-slate-300">
+                            Created Date <span className="text-slate-500">(optional)</span>
+                        </Label>
+                        <Input
+                            id="created_at"
+                            name="created_at"
+                            type="datetime-local"
+                            className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                        />
+                        <p className="text-xs text-slate-500">Leave blank to use current date</p>
+                    </div>
+                </div>
+
+                {/* Submit */}
+                <div className="flex justify-end pt-4 border-t border-slate-800">
+                    <SubmitButton />
+                </div>
+            </form>
+        </div>
+    );
+}
