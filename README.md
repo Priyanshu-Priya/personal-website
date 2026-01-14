@@ -58,7 +58,7 @@ It is focused on **clarity, intentional design, and long-term growth** rather th
 - Dedicated Contact page
 - Reusable contact form (Home + Contact page)
 
-### 🛠 Admin Dashboard *(future extension)*
+### 🛠 Admin Dashboard 
 - Add / Edit content
 - Manage messages
 - Draft & publish workflow
