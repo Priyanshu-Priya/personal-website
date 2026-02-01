@@ -88,76 +88,73 @@ export function EditorialFeaturedCard({ project, index = 0 }: FeaturedProjectCar
                                         {project.project_type}
                                     </span>
                                 )}
-                                {formattedDate}
-                            </span>
-                                )}
-                        </div>
-
-                        {/* Title */}
-                        <h2 className="text-2xl md:text-3xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-tight">
-                            {project.title}
-                        </h2>
-
-                        {/* Summary */}
-                        <p className="text-slate-400 line-clamp-2 leading-relaxed">
-                            {project.summary}
-                        </p>
-
-                        {/* Tech Stack */}
-                        {project.tech_stack && project.tech_stack.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5">
-                                {project.tech_stack.slice(0, 4).map((tech) => (
-                                    <span
-                                        key={tech}
-                                        className="px-2 py-1 text-xs font-medium rounded-md bg-slate-800/80 text-slate-400 border border-slate-700/50"
-                                    >
-                                        {tech}
-                                    </span>
-                                ))}
-                                {project.tech_stack.length > 4 && (
-                                    <span className="px-2 py-1 text-xs text-slate-500">
-                                        +{project.tech_stack.length - 4}
-                                    </span>
-                                )}
                             </div>
-                        )}
 
-                        {/* Action Row */}
-                        <div className="flex items-center gap-4 pt-2">
-                            {project.github_url && (
-                                <a
-                                    href={project.github_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-white transition-colors"
-                                >
-                                    <Github className="w-4 h-4" />
-                                    <span>Source</span>
-                                </a>
+                            {/* Title */}
+                            <h2 className="text-2xl md:text-3xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-tight">
+                                {project.title}
+                            </h2>
+
+                            {/* Summary */}
+                            <p className="text-slate-400 line-clamp-2 leading-relaxed">
+                                {project.summary}
+                            </p>
+
+                            {/* Tech Stack */}
+                            {project.tech_stack && project.tech_stack.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5">
+                                    {project.tech_stack.slice(0, 4).map((tech) => (
+                                        <span
+                                            key={tech}
+                                            className="px-2 py-1 text-xs font-medium rounded-md bg-slate-800/80 text-slate-400 border border-slate-700/50"
+                                        >
+                                            {tech}
+                                        </span>
+                                    ))}
+                                    {project.tech_stack.length > 4 && (
+                                        <span className="px-2 py-1 text-xs text-slate-500">
+                                            +{project.tech_stack.length - 4}
+                                        </span>
+                                    )}
+                                </div>
                             )}
-                            {(project.live_url || project.demo_url) && (
-                                <a
-                                    href={project.demo_url || project.live_url || '#'}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-white transition-colors"
-                                >
-                                    <ExternalLink className="w-4 h-4" />
-                                    <span>Demo</span>
-                                </a>
-                            )}
-                            <div className="flex-1" />
-                            <div className="flex items-center gap-1 text-sm text-indigo-400 font-medium">
-                                <span>View Project</span>
-                                <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+
+                            {/* Action Row */}
+                            <div className="flex items-center gap-4 pt-2">
+                                {project.github_url && (
+                                    <a
+                                        href={project.github_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-white transition-colors"
+                                    >
+                                        <Github className="w-4 h-4" />
+                                        <span>Source</span>
+                                    </a>
+                                )}
+                                {(project.live_url || project.demo_url) && (
+                                    <a
+                                        href={project.demo_url || project.live_url || '#'}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-white transition-colors"
+                                    >
+                                        <ExternalLink className="w-4 h-4" />
+                                        <span>Demo</span>
+                                    </a>
+                                )}
+                                <div className="flex-1" />
+                                <div className="flex items-center gap-1 text-sm text-indigo-400 font-medium">
+                                    <span>View Project</span>
+                                    <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </Link>
+            </Link>
         </motion.article >
     );
 }

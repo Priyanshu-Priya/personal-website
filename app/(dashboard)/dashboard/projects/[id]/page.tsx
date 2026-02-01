@@ -23,6 +23,7 @@ interface Project {
     demo_url: string | null;
     docs_url: string | null;
     linkedin_post_url: string | null;
+    working_on: boolean;
     problem_statement: string | null;
     solution_approach: string | null;
     key_features: string[] | null;

@@ -133,14 +133,14 @@ function BentoCard({ project, isFeatured }: BentoCardProps) {
                     <div className="relative h-full p-6 flex flex-col justify-end">
 
                         {/* Date badge */}
-                        {formatProjectDate(project.display_date) && (
+                        {formatProjectDate(project.display_date ?? null) && (
                             <motion.div
                                 className="absolute top-4 left-4 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-700/50 text-slate-300 text-xs font-medium backdrop-blur-sm"
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.5 }}
                             >
-                                {formatProjectDate(project.display_date)}
+                                {formatProjectDate(project.display_date ?? null)}
                             </motion.div>
                         )}
 
