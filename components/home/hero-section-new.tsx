@@ -35,7 +35,7 @@ export function HeroSection({ content, latestThought }: HeroSectionProps) {
             </motion.div>
 
             {/* Content */}
-            <div className="relative z-10 max-w-5xl mx-auto px-6 py-32 text-center">
+            <div className="relative z-10 max-w-5xl mx-auto px-6 pt-16 pb-20 md:py-32 text-center">
                 {/* Greeting */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
