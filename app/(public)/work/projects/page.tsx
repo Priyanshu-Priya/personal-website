@@ -1,17 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
-import { ProjectsGridClient } from './projects-client';
+import { ProjectShowcase } from '@/components/projects/project-showcase';
 import { getPageContent, defaultProjectsContent } from '@/lib/content';
 import type { ProjectsPageContent } from '@/types/content';
-
-interface Project {
-    id: string;
-    title: string;
-    slug: string;
-    summary: string;
-    thumbnail_url: string | null;
-    tech_stack: string[];
-    is_featured: boolean;
-}
+import type { Project } from '@/components/projects/showcase-card';
 
 export default async function ProjectsPage() {
     const supabase = await createClient();
@@ -33,5 +24,5 @@ export default async function ProjectsPage() {
     // Use CMS content or fallback
     const pageContent: ProjectsPageContent = content || defaultProjectsContent;
 
-    return <ProjectsGridClient content={pageContent} projects={(projects as Project[]) || []} />;
+    return <ProjectShowcase content={pageContent} projects={(projects as Project[]) || []} />;
 }

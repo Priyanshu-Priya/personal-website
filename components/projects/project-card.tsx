@@ -81,14 +81,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
                             )}
                         </div>
 
-                        {/* Featured Badge */}
-                        {project.is_featured && (
-                            <div className="absolute bottom-3 left-3">
-                                <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 backdrop-blur-sm">
-                                    Featured
-                                </span>
-                            </div>
-                        )}
+
                     </div>
 
                     {/* Content Section */}

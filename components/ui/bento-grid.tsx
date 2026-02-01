@@ -5,6 +5,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowUpRight, Code2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+
+// Format date to "MMM yyyy" (e.g., "Jan 2026")
+function formatProjectDate(dateString: string | null): string | null {
+    if (!dateString) return null;
+    try {
+        return format(new Date(dateString), 'MMM yyyy');
+    } catch {
+        return dateString;
+    }
+}
 
 interface Project {
     id: string;
@@ -120,15 +131,16 @@ function BentoCard({ project, isFeatured }: BentoCardProps) {
 
                     {/* Content */}
                     <div className="relative h-full p-6 flex flex-col justify-end">
-                        {/* Featured badge */}
-                        {isFeatured && (
+
+                        {/* Date badge */}
+                        {formatProjectDate(project.display_date) && (
                             <motion.div
-                                className="absolute top-4 left-4 px-3 py-1 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-300 text-xs font-medium backdrop-blur-sm"
+                                className="absolute top-4 left-4 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-700/50 text-slate-300 text-xs font-medium backdrop-blur-sm"
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.5 }}
                             >
-                                Featured
+                                {formatProjectDate(project.display_date)}
                             </motion.div>
                         )}
 

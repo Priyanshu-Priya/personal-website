@@ -14,6 +14,7 @@ interface Project {
     thumbnail_url: string | null;
     tech_stack: string[];
     is_featured?: boolean;
+    display_date?: string | null;
 }
 
 interface ProjectsSectionProps {

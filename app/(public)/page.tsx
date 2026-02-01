@@ -81,7 +81,7 @@ export default async function HomePage() {
             .single(),
         supabase
             .from('projects')
-            .select('id, title, slug, summary, thumbnail_url, tech_stack, is_featured')
+            .select('id, title, slug, summary, thumbnail_url, tech_stack, is_featured, display_date')
             .eq('is_published', true)
             .eq('is_featured', true)
             .order('display_date', { ascending: false, nullsFirst: false })
