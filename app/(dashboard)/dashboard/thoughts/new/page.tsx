@@ -13,6 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { CreatableSelect } from '@/components/ui/creatable-select';
 import { createThought } from '../actions';
 
 function SubmitButton() {
@@ -80,18 +81,20 @@ export default function NewThoughtPage() {
                         <Label htmlFor="mood" className="text-slate-300">
                             Mood
                         </Label>
-                        <Select name="mood">
-                            <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
-                                <SelectValue placeholder="Select mood (optional)" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-slate-900 border-slate-700">
-                                <SelectItem value="productive">Productive</SelectItem>
-                                <SelectItem value="pensive">Pensive</SelectItem>
-                                <SelectItem value="excited">Excited</SelectItem>
-                                <SelectItem value="frustrated">Frustrated</SelectItem>
-                                <SelectItem value="calm">Calm</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <CreatableSelect
+                            name="mood"
+                            placeholder="Select or type a mood..."
+                            options={[
+                                { value: 'Productive', label: '🚀 Productive' },
+                                { value: 'Pensive', label: '💭 Pensive' },
+                                { value: 'Excited', label: '⚡ Excited' },
+                                { value: 'Frustrated', label: '😤 Frustrated' },
+                                { value: 'Calm', label: '🌊 Calm' },
+                                { value: 'Curious', label: '🤔 Curious' },
+                                { value: 'Grateful', label: '🙏 Grateful' },
+                                { value: 'Tired', label: '😴 Tired' },
+                            ]}
+                        />
                     </div>
 
                     {/* Published Checkbox */}

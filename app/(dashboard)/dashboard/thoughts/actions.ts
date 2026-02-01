@@ -78,19 +78,29 @@ export async function updateThought(id: string, formData: FormData) {
         throw new Error('Content is required');
     }
 
+    const user = await supabase.auth.getUser();
+    if (!user.data.user?.id) {
+        throw new Error('User not authenticated');
+    }
+
     try {
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('thoughts')
             .update({
                 content: content.trim(),
                 mood: mood || null,
                 is_published,
             })
-            .eq('id', id);
+            .eq('id', id)
+            .select();
 
         if (error) {
             console.error('Error updating thought:', error);
             throw new Error('Failed to update thought');
+        }
+
+        if (!data || data.length === 0) {
+            throw new Error('Thought not found or permission denied');
         }
     } catch (error) {
         console.error('Error:', error);

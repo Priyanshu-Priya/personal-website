@@ -6,6 +6,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { CreatableSelect } from '@/components/ui/creatable-select';
 import { updateThought } from '../actions';
 
 interface Thought {
@@ -18,15 +19,6 @@ interface Thought {
 interface ThoughtEditFormProps {
     thought: Thought;
 }
-
-const moodOptions = [
-    { value: '', label: 'No mood' },
-    { value: 'productive', label: '🚀 Productive' },
-    { value: 'pensive', label: '💭 Pensive' },
-    { value: 'excited', label: '⚡ Excited' },
-    { value: 'frustrated', label: '😤 Frustrated' },
-    { value: 'calm', label: '🌊 Calm' },
-];
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -94,18 +86,21 @@ export function ThoughtEditForm({ thought }: ThoughtEditFormProps) {
                     <Label htmlFor="mood" className="text-slate-300">
                         Mood
                     </Label>
-                    <select
-                        id="mood"
+                    <CreatableSelect
                         name="mood"
-                        defaultValue={thought.mood || ''}
-                        className="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700 text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    >
-                        {moodOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
+                        value={thought.mood || ''}
+                        placeholder="Select or type a mood..."
+                        options={[
+                            { value: 'Productive', label: '🚀 Productive' },
+                            { value: 'Pensive', label: '💭 Pensive' },
+                            { value: 'Excited', label: '⚡ Excited' },
+                            { value: 'Frustrated', label: '😤 Frustrated' },
+                            { value: 'Calm', label: '🌊 Calm' },
+                            { value: 'Curious', label: '🤔 Curious' },
+                            { value: 'Grateful', label: '🙏 Grateful' },
+                            { value: 'Tired', label: '😴 Tired' },
+                        ]}
+                    />
                 </div>
 
                 {/* Published */}
