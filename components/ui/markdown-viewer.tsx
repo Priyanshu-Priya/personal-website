@@ -7,7 +7,13 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import 'highlight.js/styles/github-dark.css'; // Syntax highlighting theme
 import { cn } from '@/lib/utils';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Copy, Check } from 'lucide-react';
+import { useState, useRef } from 'react';
+
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
+import 'katex/dist/katex.min.css'; // LaTeX styles
 
 interface MarkdownViewerProps {
     content: string;
@@ -18,13 +24,19 @@ export function MarkdownViewer({ content, className }: MarkdownViewerProps) {
     return (
         <div className={cn("prose prose-lg prose-invert max-w-none", className)}>
             <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
+                remarkPlugins={[remarkGfm, remarkMath]}
                 rehypePlugins={[
+                    rehypeRaw,
                     rehypeHighlight,
                     rehypeSlug,
+                    rehypeKatex,
                     [rehypeAutolinkHeadings, { behavior: 'wrap' }]
                 ]}
                 components={{
+                    // ... existing components (re-include them if not using multi-replace, but here I'm replacing the whole component logic if easier, or just inserting)
+                    // Wait, replace_file_content replaces a BLOCK. I need to be careful to include everything or just the changed parts.
+                    // The user wants ALL these features. I will update the component prop entirely to be safe and comprehensive.
+
                     // Responsive Table Wrapper
                     table: ({ node, ...props }) => (
                         <div className="overflow-x-auto my-8 first:mt-0 border border-slate-800 rounded-lg shadow-sm">
@@ -69,31 +81,48 @@ export function MarkdownViewer({ content, className }: MarkdownViewerProps) {
                         );
                     },
                     // Code Blocks
-                    pre: ({ node, ...props }) => (
-                        <pre className="relative p-0 overflow-hidden rounded-xl border border-slate-800 bg-[#0d1117] my-6 first:mt-0 text-sm" {...props} />
-                    ),
-                    code: ({ node, className, children, ...props }) => {
-                        const match = /language-(\w+)/.exec(className || '');
-                        const isInline = !match && !JSON.stringify(props).includes("node"); // Simplified check 
-                        // Actually react-markdown passes `inline` prop usually, but it's not in the types by default?
-                        // Let's rely on grandparent being 'pre'? No.
-                        // Usually if it has no className and isn't a block, it is inline.
+                    pre: ({ node, children, ...props }) => {
+                        // eslint-disable-next-line react-hooks/rules-of-hooks
+                        const [isCopied, setIsCopied] = useState(false);
+                        const preRef = useRef<HTMLPreElement>(null);
 
-                        // Robust inline check: if parent is NOT pre. But we don't have parent here easily.
-                        // The simpler way: if className is missing, treat as inline (usually).
-                        // But `rehype-highlight` might add className.
-
-                        // Best approach with react-markdown v9+:
-                        // It renders `pre > code` for blocks.
+                        const handleCopy = async () => {
+                            if (preRef.current) {
+                                const codeElement = preRef.current.querySelector('code');
+                                const text = codeElement?.innerText || '';
+                                await navigator.clipboard.writeText(text);
+                                setIsCopied(true);
+                                setTimeout(() => setIsCopied(false), 2000);
+                            }
+                        };
 
                         return (
-                            <code className={cn(className, "font-mono")} {...props}>
+                            <div className="relative group my-6 first:mt-0">
+                                <button
+                                    onClick={handleCopy}
+                                    className="absolute right-3 top-3 p-2 rounded-lg bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 transition-all opacity-100 focus:opacity-100 z-10"
+                                    title="Copy code"
+                                >
+                                    {isCopied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                                </button>
+                                <pre
+                                    ref={preRef}
+                                    className="relative p-0 overflow-hidden rounded-xl border border-slate-800 bg-[#0d1117] text-sm"
+                                    {...props}
+                                >
+                                    {children}
+                                </pre>
+                            </div>
+                        );
+                    },
+                    code: ({ node, className, children, ...props }) => {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return (
+                            <code className={cn(className, "font-mono text-sm px-1.5 py-0.5 rounded-md bg-slate-800/50 text-indigo-300")} {...props}>
                                 {children}
                             </code>
                         );
                     },
-                    // Inline Code (Override if not handled above correctly by prose)
-                    // Actually prose handles basic inline code well. We just want to ensure colors.
 
                     // Blockquotes
                     blockquote: ({ node, ...props }) => (
@@ -115,6 +144,35 @@ export function MarkdownViewer({ content, className }: MarkdownViewerProps) {
 
                     // Horizontal Rule
                     hr: ({ node, ...props }) => <hr className="my-12 border-slate-800" {...props} />,
+
+                    // --- NEW FEATURES ---
+
+                    // Details / Summary
+                    details: ({ node, ...props }) => (
+                        <details className="my-4 border border-slate-800 rounded-lg bg-slate-900/30 open:bg-slate-900/50 transition-colors" {...props} />
+                    ),
+                    summary: ({ node, ...props }) => (
+                        <summary className="cursor-pointer px-4 py-3 font-medium text-slate-200 hover:text-white focus:outline-none" {...props} />
+                    ),
+
+                    // Keyboard Input
+                    kbd: ({ node, ...props }) => (
+                        <kbd className="px-2 py-1 text-xs font-semibold text-slate-200 bg-slate-800 border border-slate-700 rounded-lg shadow-[0px_2px_0px_0px_rgba(255,255,255,0.1)] inline-block mx-0.5 align-middle font-mono" {...props} />
+                    ),
+
+                    // Inputs (Checkbox for Task Lists)
+                    input: ({ node, ...props }) => {
+                        if (props.type === 'checkbox') {
+                            return (
+                                <input
+                                    type="checkbox"
+                                    className="appearance-none h-4 w-4 border border-slate-600 rounded bg-slate-900 checked:bg-indigo-600 checked:border-indigo-600 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition-all mr-2 cursor-pointer relative top-[2px]"
+                                    {...props}
+                                />
+                            )
+                        }
+                        return <input {...props} />
+                    }
                 }}
             >
                 {content}
