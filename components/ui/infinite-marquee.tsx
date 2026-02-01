@@ -35,6 +35,9 @@ export function InfiniteMarquee({
         }
     }, []);
 
+    // Faster speed on mobile for smoother perception
+    const mobileSpeed = speed * 0.6;
+
     return (
         <div
             ref={containerRef}
@@ -47,7 +50,7 @@ export function InfiniteMarquee({
         >
             <motion.div
                 ref={scrollerRef}
-                className="flex min-w-full gap-4"
+                className="flex min-w-full gap-3 md:gap-4"
                 animate={
                     start
                         ? {
@@ -59,7 +62,7 @@ export function InfiniteMarquee({
                     x: {
                         repeat: Infinity,
                         repeatType: 'loop',
-                        duration: speed,
+                        duration: typeof window !== 'undefined' && window.innerWidth < 768 ? mobileSpeed : speed,
                         ease: 'linear',
                     },
                 }}
@@ -82,8 +85,9 @@ export function MarqueeItem({ children, className }: MarqueeItemProps) {
     return (
         <div
             className={cn(
-                'flex shrink-0 items-center justify-center px-6 py-3',
-                'rounded-xl bg-slate-900/50 border border-slate-800/50',
+                'flex shrink-0 items-center justify-center px-4 py-2 md:px-6 md:py-3',
+                'text-sm md:text-base',
+                'rounded-lg md:rounded-xl bg-slate-900/50 border border-slate-800/50',
                 'hover:border-violet-500/30 transition-colors duration-300',
                 className
             )}
