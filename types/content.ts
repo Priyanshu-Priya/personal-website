@@ -157,6 +157,8 @@ export interface AboutPageContent {
         section_title: string;
         badge: string;
         items: string[];
+        cta_button?: string;
+        cta_href?: string;
     };
     connect: {
         enabled: boolean;

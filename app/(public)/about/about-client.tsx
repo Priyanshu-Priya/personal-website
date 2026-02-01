@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { ArrowRight, MapPin, GraduationCap, Code2, Brain, Sparkles } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 import { GradientOrb } from '@/components/ui/aurora-background';
@@ -178,6 +179,13 @@ export function AboutPageClient({ content, socialLinks, resumeUrl }: AboutPageCl
                             </li>
                         ))}
                     </ul>
+                    <Link
+                        href={content.focus.cta_href || "/now"}
+                        className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-lg bg-amber-500/10 text-amber-400 font-medium border border-amber-500/20 hover:bg-amber-500/20 hover:border-amber-500/40 transition-all"
+                    >
+                        {content.focus.cta_button || "See What I'm Working On"}
+                        <ArrowRight className="w-4 h-4" />
+                    </Link>
                 </div>
             </GlowCard>
         </motion.section>
