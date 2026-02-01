@@ -33,8 +33,8 @@ export default async function Now() {
             .from('projects')
             .select('id, title, slug, summary')
             .eq('is_published', true)
-            .order('created_at', { ascending: false })
-            .limit(3),
+            .eq('working_on', true)
+            .order('created_at', { ascending: false }),
     ]);
 
     // Use CMS content or fallback

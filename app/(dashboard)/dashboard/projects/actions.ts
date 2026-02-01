@@ -27,6 +27,7 @@ export async function createProject(formData: FormData) {
     const linkedin_post_url = formData.get('linkedin_post_url') as string;
     const is_featured = formData.get('is_featured') === 'on';
     const is_published = formData.get('is_published') === 'on';
+    const working_on = formData.get('working_on') === 'on';
     const thumbnail = formData.get('thumbnail') as File | null;
     const created_at_raw = formData.get('created_at') as string;
     const project_type = formData.get('project_type') as string;
@@ -86,6 +87,7 @@ export async function createProject(formData: FormData) {
             thumbnail_url,
             is_featured,
             is_published,
+            working_on,
             project_type: project_type || null,
             status: status || 'Completed',
             role: role || null,
@@ -173,6 +175,7 @@ export async function updateProject(id: string, formData: FormData) {
     const linkedin_post_url = formData.get('linkedin_post_url') as string;
     const is_featured = formData.get('is_featured') === 'on';
     const is_published = formData.get('is_published') === 'on';
+    const working_on = formData.get('working_on') === 'on';
     const thumbnail = formData.get('thumbnail') as File | null;
     const remove_thumbnail = formData.get('remove_thumbnail') === 'true';
     const created_at_raw = formData.get('created_at') as string;
@@ -261,6 +264,7 @@ export async function updateProject(id: string, formData: FormData) {
             thumbnail_url,
             is_featured,
             is_published,
+            working_on,
             project_type: project_type || null,
             status: status || 'Completed',
             role: role || null,

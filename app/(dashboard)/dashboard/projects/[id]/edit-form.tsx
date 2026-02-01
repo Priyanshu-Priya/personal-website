@@ -9,13 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { CreatableSelect } from '@/components/ui/creatable-select';
+import { Switch } from '@/components/ui/switch';
 import { updateProject } from '../actions';
 import { PROJECT_TYPE_OPTIONS, PROJECT_STATUS_OPTIONS, PROJECT_ROLE_OPTIONS } from '@/types/project';
 
@@ -34,6 +29,7 @@ interface Project {
     thumbnail_url: string | null;
     is_featured: boolean;
     is_published: boolean;
+    working_on: boolean;
     created_at: string;
     project_type: string | null;
     status: string | null;
@@ -190,54 +186,36 @@ export function ProjectEditForm({ project }: ProjectEditFormProps) {
                             <Label htmlFor="project_type" className="text-slate-300">
                                 Project Type
                             </Label>
-                            <Select name="project_type" defaultValue={project.project_type || undefined}>
-                                <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
-                                    <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-slate-900 border-slate-700">
-                                    {PROJECT_TYPE_OPTIONS.map((type) => (
-                                        <SelectItem key={type} value={type} className="text-white hover:bg-slate-800">
-                                            {type}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <CreatableSelect
+                                name="project_type"
+                                value={project.project_type || ''}
+                                options={PROJECT_TYPE_OPTIONS.map(opt => ({ value: opt, label: opt }))}
+                                placeholder="Select or type..."
+                            />
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="status" className="text-slate-300">
                                 Status
                             </Label>
-                            <Select name="status" defaultValue={project.status || 'Completed'}>
-                                <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
-                                    <SelectValue placeholder="Select status" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-slate-900 border-slate-700">
-                                    {PROJECT_STATUS_OPTIONS.map((status) => (
-                                        <SelectItem key={status} value={status} className="text-white hover:bg-slate-800">
-                                            {status}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <CreatableSelect
+                                name="status"
+                                value={project.status || 'Completed'}
+                                options={PROJECT_STATUS_OPTIONS.map(opt => ({ value: opt, label: opt }))}
+                                placeholder="Select or type..."
+                            />
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="role" className="text-slate-300">
                                 Role
                             </Label>
-                            <Select name="role" defaultValue={project.role || undefined}>
-                                <SelectTrigger className="bg-slate-900 border-slate-700 text-white">
-                                    <SelectValue placeholder="Select role" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-slate-900 border-slate-700">
-                                    {PROJECT_ROLE_OPTIONS.map((role) => (
-                                        <SelectItem key={role} value={role} className="text-white hover:bg-slate-800">
-                                            {role}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <CreatableSelect
+                                name="role"
+                                value={project.role || ''}
+                                options={PROJECT_ROLE_OPTIONS.map(opt => ({ value: opt, label: opt }))}
+                                placeholder="Select or type..."
+                            />
                         </div>
                     </div>
 
@@ -398,12 +376,10 @@ export function ProjectEditForm({ project }: ProjectEditFormProps) {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div className="flex items-center gap-3">
-                            <input
-                                type="checkbox"
+                            <Switch
                                 id="is_featured"
                                 name="is_featured"
                                 defaultChecked={project.is_featured}
-                                className="w-5 h-5 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-950"
                             />
                             <Label
                                 htmlFor="is_featured"
@@ -414,18 +390,31 @@ export function ProjectEditForm({ project }: ProjectEditFormProps) {
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <input
-                                type="checkbox"
+                            <Switch
                                 id="is_published"
                                 name="is_published"
                                 defaultChecked={project.is_published}
-                                className="w-5 h-5 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-950"
                             />
                             <Label
                                 htmlFor="is_published"
                                 className="text-slate-400 font-normal cursor-pointer"
                             >
                                 Publish project
+                            </Label>
+                        </div>
+
+                        {/* Working On */}
+                        <div className="flex items-center gap-3 sm:col-span-2">
+                            <Switch
+                                id="working_on"
+                                name="working_on"
+                                defaultChecked={project.working_on}
+                            />
+                            <Label
+                                htmlFor="working_on"
+                                className="text-slate-400 font-normal cursor-pointer"
+                            >
+                                Mark as &quot;Working On&quot; (Show on Now page)
                             </Label>
                         </div>
                     </div>
