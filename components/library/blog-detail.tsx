@@ -8,6 +8,8 @@ import { format } from 'date-fns';
 import { GlowCard } from '@/components/ui/glow-card';
 import { GradientOrb } from '@/components/ui/aurora-background';
 import { MarkdownViewer } from '@/components/ui/markdown-viewer';
+import { BlogNavigation } from './blog-navigation';
+import { CTABanner } from '@/components/shared/cta-banner';
 
 interface BlogPost {
     id: string;
@@ -22,9 +24,11 @@ interface BlogPost {
 
 interface BlogDetailProps {
     post: BlogPost;
+    previousPost?: { slug: string; title: string } | null;
+    nextPost?: { slug: string; title: string } | null;
 }
 
-export function BlogDetail({ post }: BlogDetailProps) {
+export function BlogDetail({ post, previousPost = null, nextPost = null }: BlogDetailProps) {
     // Estimate reading time
     const wordsPerMinute = 200;
     const wordCount = post.content?.split(/\s+/).length || 0;
@@ -135,21 +139,17 @@ export function BlogDetail({ post }: BlogDetailProps) {
                     </GlowCard>
                 </motion.article>
 
-                {/* Footer */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="mt-16 pt-8 border-t border-slate-800 text-center"
-                >
-                    <Link
-                        href="/library/blog"
-                        className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Browse all posts
-                    </Link>
-                </motion.div>
+                {/* Navigation */}
+                <BlogNavigation
+                    previousPost={previousPost}
+                    nextPost={nextPost}
+                />
+
+                {/* CTA Section */}
+                <CTABanner
+                    message="Want to discuss this topic?"
+                    accentColor="violet"
+                />
             </div>
 
         </main>
