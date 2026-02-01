@@ -14,29 +14,10 @@ interface ContactPageClientProps {
 import { SocialLinks } from '@/components/shared/SocialLinks';
 
 export function ContactPageClient({ content, config }: ContactPageClientProps) {
-    const contactInfo = [
-        {
-            icon: Mail,
-            label: 'Email',
-            value: content.contact_info.email,
-            href: `mailto:${content.contact_info.email}`,
-        },
-        {
-            icon: MapPin,
-            label: 'Location',
-            value: content.contact_info.location,
-            href: null,
-        },
-        {
-            icon: Clock,
-            label: 'Timezone',
-            value: content.contact_info.timezone,
-            href: null,
-        },
-    ];
+
 
     return (
-        <main className="min-h-screen pt-28 pb-20">
+        <main className="min-h-screen pt-20 lg:pt-28 pb-20">
             {/* Background Elements */}
             <div className="fixed inset-0 -z-10">
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
@@ -46,7 +27,7 @@ export function ContactPageClient({ content, config }: ContactPageClientProps) {
             <div className="max-w-6xl mx-auto px-6">
                 {/* Header */}
                 <motion.div
-                    className="text-center mb-16"
+                    className="text-center mb-8 lg:mb-16"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
@@ -66,71 +47,93 @@ export function ContactPageClient({ content, config }: ContactPageClientProps) {
                 </motion.div>
 
                 {/* Content Grid */}
-                <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
-                    {/* Contact Info - Left Side */}
+                <div className="flex flex-col lg:grid lg:grid-cols-5 gap-8 lg:gap-16">
+                    {/* Contact Info - Left Side (Order 2 on Mobile) */}
                     <motion.div
-                        className="lg:col-span-2 space-y-8"
+                        className="order-2 lg:order-1 lg:col-span-2 space-y-8"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
                     >
-                        {/* Quick Contact Cards */}
+                        {/* Quick Contact Cards (Email) */}
                         <div className="space-y-4">
-                            {contactInfo.map((info, index) => (
-                                <motion.div
-                                    key={info.label}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
-                                    className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-colors group"
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: 0.2 }}
+                                className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-violet-500/30 transition-colors group"
+                            >
+                                <Link
+                                    href={`mailto:${content.contact_info.email}`}
+                                    className="flex items-center lg:items-start gap-4 flex-col lg:flex-row text-center lg:text-left"
                                 >
-                                    {info.href ? (
-                                        <Link
-                                            href={info.href}
-                                            className="flex items-start gap-4"
-                                        >
-                                            <div className="p-2.5 rounded-lg bg-violet-500/10 text-violet-400 group-hover:bg-violet-500/20 transition-colors">
-                                                <info.icon className="w-5 h-5" />
-                                            </div>
-                                            <div className="flex-1">
-                                                <p className="text-sm text-slate-500 mb-1">{info.label}</p>
-                                                <p className="text-white font-medium flex items-center gap-1">
-                                                    {info.value}
-                                                    <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                </p>
-                                            </div>
-                                        </Link>
-                                    ) : (
-                                        <div className="flex items-start gap-4">
-                                            <div className="p-2.5 rounded-lg bg-violet-500/10 text-violet-400">
-                                                <info.icon className="w-5 h-5" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm text-slate-500 mb-1">{info.label}</p>
-                                                <p className="text-white font-medium">{info.value}</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                </motion.div>
-                            ))}
+                                    <div className="p-2.5 rounded-lg bg-violet-500/10 text-violet-400 group-hover:bg-violet-500/20 transition-colors">
+                                        <Mail className="w-5 h-5" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm text-slate-500 mb-1">Email</p>
+                                        <p className="text-white font-medium flex items-center justify-center lg:justify-start gap-1">
+                                            {content.contact_info.email}
+                                            <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </p>
+                                    </div>
+                                </Link>
+                            </motion.div>
                         </div>
 
                         {/* Social Links */}
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.5 }}
-                            className="p-6 rounded-xl bg-slate-900/50 border border-slate-800"
+                            transition={{ duration: 0.3, delay: 0.3 }}
+                            className="p-6 rounded-xl bg-slate-900/50 border border-slate-800 text-center lg:text-left"
                         >
                             <h3 className="text-sm font-medium text-slate-400 mb-4">
                                 Connect on Social
                             </h3>
-                            <SocialLinks
-                                config={config}
-                                itemClassName="p-3 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all"
-                                iconClassName="w-5 h-5"
-                            />
+                            <div className="flex justify-center lg:justify-start">
+                                <SocialLinks
+                                    config={config}
+                                    itemClassName="p-3 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all"
+                                    iconClassName="w-5 h-5"
+                                />
+                            </div>
+                        </motion.div>
 
+                        {/* Regional Details Card (Location & Timezone) */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.4 }}
+                            className="rounded-xl overflow-hidden border border-slate-800 bg-slate-900/50"
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-800">
+                                {/* Location Section */}
+                                <div className="p-4 flex flex-col items-center lg:items-start text-center lg:text-left hover:bg-white/2 transition-colors">
+                                    <div className="p-2 mb-3 rounded-lg bg-indigo-500/10 text-indigo-400">
+                                        <MapPin className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-slate-500 mb-1">Location</p>
+                                        <p className="text-white font-medium">
+                                            {content.contact_info.location}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Timezone Section */}
+                                <div className="p-4 flex flex-col items-center lg:items-start text-center lg:text-left hover:bg-white/2 transition-colors">
+                                    <div className="p-2 mb-3 rounded-lg bg-sky-500/10 text-sky-400">
+                                        <Clock className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-slate-500 mb-1">Timezone</p>
+                                        <p className="text-white font-medium">
+                                            {content.contact_info.timezone}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </motion.div>
 
                         {/* Availability Status */}
@@ -139,9 +142,9 @@ export function ContactPageClient({ content, config }: ContactPageClientProps) {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, delay: 0.6 }}
-                                className="p-6 rounded-xl bg-linear-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20"
+                                className="p-6 rounded-xl bg-linear-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 text-center lg:text-left"
                             >
-                                <div className="flex items-center gap-3 mb-2">
+                                <div className="flex items-center justify-center lg:justify-start gap-3 mb-2">
                                     <span className="relative flex h-3 w-3">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                                         <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
@@ -157,9 +160,9 @@ export function ContactPageClient({ content, config }: ContactPageClientProps) {
                         )}
                     </motion.div>
 
-                    {/* Contact Form - Right Side */}
+                    {/* Contact Form - Right Side (Order 1 on Mobile) */}
                     <motion.div
-                        className="lg:col-span-3"
+                        className="order-1 lg:order-2 lg:col-span-3"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
