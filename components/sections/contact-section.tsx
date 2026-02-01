@@ -10,10 +10,29 @@ interface ContactSectionProps {
     title: string;
     subtitle: string;
     buttonText: string;
+    nameLabel?: string;
+    emailLabel?: string;
+    messageLabel?: string;
+    namePlaceholder?: string;
+    emailPlaceholder?: string;
+    messagePlaceholder?: string;
+    successMessage?: string;
     config: GlobalConfig;
 }
 
-export function ContactSection({ title, subtitle, buttonText, config }: ContactSectionProps) {
+export function ContactSection({
+    title,
+    subtitle,
+    buttonText,
+    nameLabel,
+    emailLabel,
+    messageLabel,
+    namePlaceholder,
+    emailPlaceholder,
+    messagePlaceholder,
+    successMessage,
+    config
+}: ContactSectionProps) {
 
     return (
         <section className="py-20 md:py-32 relative">
@@ -100,7 +119,16 @@ export function ContactSection({ title, subtitle, buttonText, config }: ContactS
                             <p className="text-slate-400 text-sm mb-6">
                                 Fill out the form and I&apos;ll respond within 24-48 hours.
                             </p>
-                            <ContactForm submitText={buttonText} />
+                            <ContactForm
+                                submitText={buttonText}
+                                nameLabel={nameLabel}
+                                emailLabel={emailLabel}
+                                messageLabel={messageLabel}
+                                namePlaceholder={namePlaceholder}
+                                emailPlaceholder={emailPlaceholder}
+                                messagePlaceholder={messagePlaceholder}
+                                successMessage={successMessage}
+                            />
                         </div>
                     </motion.div>
                 </div>

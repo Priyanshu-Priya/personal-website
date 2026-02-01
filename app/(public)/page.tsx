@@ -168,6 +168,13 @@ export default async function HomePage() {
                     title={pageContent.contact_section?.title ?? "Let's Build Together"}
                     subtitle={pageContent.contact_section?.subtitle ?? 'Have an idea or project in mind?'}
                     buttonText={pageContent.contact_section?.button_text ?? 'Send Message'}
+                    nameLabel={pageContent.contact_section?.name_label}
+                    emailLabel={pageContent.contact_section?.email_label}
+                    messageLabel={pageContent.contact_section?.message_label}
+                    namePlaceholder={pageContent.contact_section?.name_placeholder}
+                    emailPlaceholder={pageContent.contact_section?.email_placeholder}
+                    messagePlaceholder={pageContent.contact_section?.message_placeholder}
+                    successMessage={pageContent.contact_section?.success_message}
                     config={globalConfig}
                 />
             ),

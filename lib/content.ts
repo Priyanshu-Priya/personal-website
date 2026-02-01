@@ -142,6 +142,13 @@ export const defaultHomeContent: HomePageContent = {
         title: "Let's Build Together",
         subtitle: 'Have an idea or project in mind? Drop me a message.',
         button_text: 'Send Message',
+        name_label: 'Name',
+        email_label: 'Email',
+        message_label: 'Message',
+        name_placeholder: 'Your name',
+        email_placeholder: 'your@email.com',
+        message_placeholder: 'Tell me about your project or just say hello...',
+        success_message: 'Thank you! Your message has been sent successfully.',
     },
 };
 

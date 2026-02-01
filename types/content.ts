@@ -112,6 +112,13 @@ export interface HomePageContent {
         title: string;
         subtitle: string;
         button_text: string;
+        name_label: string;
+        email_label: string;
+        message_label: string;
+        name_placeholder: string;
+        email_placeholder: string;
+        message_placeholder: string;
+        success_message: string;
     };
 }
 
