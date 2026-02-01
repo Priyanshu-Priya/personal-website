@@ -254,6 +254,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                     </MagneticButton>
                 </motion.div>
             </div>
+
         </main>
     );
 }

@@ -151,6 +151,7 @@ export function BlogDetail({ post }: BlogDetailProps) {
                     </Link>
                 </motion.div>
             </div>
+
         </main>
     );
 }

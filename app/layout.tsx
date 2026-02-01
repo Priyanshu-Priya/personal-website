@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { FloatingDock } from "@/components/ui/floating-dock";
+import { BackToTop } from "@/components/ui/back-to-top";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -67,6 +68,7 @@ export default async function RootLayout({
         <SmoothScroll>
           {children}
         </SmoothScroll>
+        <BackToTop />
       </body>
     </html>
   );
