@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react';
 import { format } from 'date-fns';
 import { GlowCard } from '@/components/ui/glow-card';
 import { GradientOrb } from '@/components/ui/aurora-background';
+import { MarkdownViewer } from '@/components/ui/markdown-viewer';
 
 interface BlogPost {
     id: string;
@@ -129,8 +129,8 @@ export function BlogDetail({ post }: BlogDetailProps) {
                     transition={{ duration: 0.6, delay: 0.3 }}
                 >
                     <GlowCard>
-                        <div className="p-8 md:p-10 prose prose-invert prose-slate max-w-none prose-headings:text-white prose-p:text-slate-300 prose-strong:text-white prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline prose-code:text-violet-400 prose-pre:bg-slate-800/50 prose-pre:border prose-pre:border-slate-700 prose-blockquote:border-l-emerald-500 prose-blockquote:text-slate-400">
-                            <ReactMarkdown>{post.content}</ReactMarkdown>
+                        <div className="p-6 md:p-8">
+                            <MarkdownViewer content={post.content} />
                         </div>
                     </GlowCard>
                 </motion.article>

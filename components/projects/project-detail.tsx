@@ -3,12 +3,12 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
 import { ArrowLeft, ExternalLink, Github, Calendar, Linkedin, FileText, Layers, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { GlowCard } from '@/components/ui/glow-card';
 import { GradientOrb } from '@/components/ui/aurora-background';
 import { MagneticButton } from '@/components/ui/magnetic-button';
+import { MarkdownViewer } from '@/components/ui/markdown-viewer';
 import type { ProjectStatus } from '@/types/project';
 
 interface Project {
@@ -175,6 +175,8 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                             <MagneticButton
                                 href={project.demo_url || project.live_url || '#'}
                                 className="px-5 py-2.5 bg-indigo-600 text-white hover:bg-indigo-500 text-sm"
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
                                 <ExternalLink className="w-4 h-4" />
                                 Live Demo
@@ -184,6 +186,8 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                             <MagneticButton
                                 href={project.github_url}
                                 className="px-5 py-2.5 bg-slate-800/80 text-white border border-slate-700 text-sm"
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
                                 <Github className="w-4 h-4" />
                                 Source Code
@@ -193,6 +197,8 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                             <MagneticButton
                                 href={project.docs_url}
                                 className="px-5 py-2.5 bg-slate-800/80 text-white border border-slate-700 text-sm"
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
                                 <FileText className="w-4 h-4" />
                                 Docs
@@ -202,6 +208,8 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                             <MagneticButton
                                 href={project.linkedin_post_url}
                                 className="px-5 py-2.5 bg-[#0077B5]/15 text-white border border-[#0077B5]/40 hover:bg-[#0077B5] hover:border-[#0077B5] text-sm transition-all"
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
                                 <Linkedin className="w-4 h-4" />
                                 LinkedIn
@@ -224,9 +232,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                                     <h2 className="text-xl font-bold text-white">About This Project</h2>
                                 </div>
 
-                                <div className="prose prose-lg prose-invert prose-slate max-w-none prose-headings:text-white prose-headings:font-bold prose-p:text-slate-300 prose-p:leading-relaxed prose-strong:text-white prose-a:text-indigo-400 prose-a:no-underline hover:prose-a:underline prose-code:text-violet-400 prose-code:bg-slate-800/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-slate-800/50 prose-pre:border prose-pre:border-slate-700 prose-li:text-slate-300">
-                                    <ReactMarkdown>{project.content}</ReactMarkdown>
-                                </div>
+                                <MarkdownViewer content={project.content} />
                             </div>
                         </GlowCard>
                     </motion.article>

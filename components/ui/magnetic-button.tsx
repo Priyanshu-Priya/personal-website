@@ -4,12 +4,14 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { useRef, useState, MouseEvent } from 'react';
 import { cn } from '@/lib/utils';
 
-interface MagneticButtonProps {
+interface MagneticButtonProps extends React.HTMLAttributes<HTMLElement> {
     children: React.ReactNode;
     className?: string;
     strength?: number;
     onClick?: () => void;
     href?: string;
+    target?: string;
+    rel?: string;
 }
 
 export function MagneticButton({
@@ -18,6 +20,7 @@ export function MagneticButton({
     strength = 0.5,
     onClick,
     href,
+    ...props
 }: MagneticButtonProps) {
     const ref = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
@@ -49,7 +52,7 @@ export function MagneticButton({
         setIsHovered(true);
     };
 
-    const Component = href ? motion.a : motion.button;
+    const Component = (href ? motion.a : motion.button) as any;
 
     return (
         <div
@@ -72,6 +75,7 @@ export function MagneticButton({
                     isHovered && 'before:opacity-100',
                     className
                 )}
+                {...props}
             >
                 <span className="relative z-10 flex items-center gap-2">{children}</span>
             </Component>
