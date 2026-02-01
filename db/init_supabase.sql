@@ -1,9 +1,14 @@
--- Reset and Seed site_config Table
+-- =========================================
+-- PERSONAL WEBSITE - SUPABASE INITIALIZATION
+-- Complete database schema and seed data
+-- =========================================
 
--- 1. Drop existing table
-DROP TABLE IF EXISTS site_config;
+-- =========================================
+-- 1. SITE CONFIG TABLE
+-- =========================================
 
--- 2. Create table
+DROP TABLE IF EXISTS site_config CASCADE;
+
 CREATE TABLE site_config (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     config_key TEXT UNIQUE NOT NULL,
@@ -12,7 +17,7 @@ CREATE TABLE site_config (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. Seed default data (Golden Standard)
+-- Seed default global config
 INSERT INTO site_config (config_key, config_value)
 VALUES ('global', '{
     "site_name": "Priyanshu Priya",
@@ -50,10 +55,12 @@ VALUES ('global', '{
     }
 }'::jsonb);
 
--- 4. Create Content Tables
+-- =========================================
+-- 2. SITE PAGES TABLE
+-- =========================================
 
--- Site Pages Table (for structured JSON content of pages like Home, About)
-DROP TABLE IF EXISTS site_pages;
+DROP TABLE IF EXISTS site_pages CASCADE;
+
 CREATE TABLE site_pages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     page_slug TEXT UNIQUE NOT NULL,
@@ -62,8 +69,12 @@ CREATE TABLE site_pages (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Projects Table
-DROP TABLE IF EXISTS projects;
+-- =========================================
+-- 3. PROJECTS TABLE
+-- =========================================
+
+DROP TABLE IF EXISTS projects CASCADE;
+
 CREATE TABLE projects (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     slug TEXT UNIQUE NOT NULL,
@@ -76,15 +87,21 @@ CREATE TABLE projects (
     github_url TEXT,
     live_url TEXT,
     demo_url TEXT,
+    linkedin_post_url TEXT,
     is_featured BOOLEAN DEFAULT false,
     is_published BOOLEAN DEFAULT true,
+    working_on BOOLEAN DEFAULT false, -- Show in "Working On" section
     display_date TIMESTAMPTZ DEFAULT NOW(),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Blog Posts Table
-DROP TABLE IF EXISTS blog_posts;
+-- =========================================
+-- 4. BLOG POSTS TABLE
+-- =========================================
+
+DROP TABLE IF EXISTS blog_posts CASCADE;
+
 CREATE TABLE blog_posts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     slug TEXT UNIQUE NOT NULL,
@@ -100,8 +117,12 @@ CREATE TABLE blog_posts (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Thoughts Table (Micro-blogging)
-DROP TABLE IF EXISTS thoughts;
+-- =========================================
+-- 5. THOUGHTS TABLE (Micro-blogging)
+-- =========================================
+
+DROP TABLE IF EXISTS thoughts CASCADE;
+
 CREATE TABLE thoughts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content TEXT NOT NULL,
@@ -111,8 +132,12 @@ CREATE TABLE thoughts (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Resonance Table (Resources/Curated links)
-DROP TABLE IF EXISTS resonance;
+-- =========================================
+-- 6. RESONANCE TABLE (Curated Resources)
+-- =========================================
+
+DROP TABLE IF EXISTS resonance CASCADE;
+
 CREATE TABLE resonance (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
@@ -125,7 +150,10 @@ CREATE TABLE resonance (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. Enable Row Level Security (RLS) for all tables
+-- =========================================
+-- 7. ENABLE ROW LEVEL SECURITY
+-- =========================================
+
 ALTER TABLE site_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE site_pages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
@@ -133,34 +161,47 @@ ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE thoughts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE resonance ENABLE ROW LEVEL SECURITY;
 
--- 6. Create RLS Policies
+-- =========================================
+-- 8. RLS POLICIES
+-- =========================================
 
--- Helper function to create standard policies
--- Note: You can run these manually if the loop structure implies complexity, 
--- but explicit policies are often safer for migration scripts.
-
--- Policies for site_config
+-- Site Config
 CREATE POLICY "Public Read config" ON site_config FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY "Admin Update config" ON site_config FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
 CREATE POLICY "Admin Insert config" ON site_config FOR INSERT TO authenticated WITH CHECK (true);
 
--- Policies for site_pages
+-- Site Pages
 CREATE POLICY "Public Read pages" ON site_pages FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY "Admin Update pages" ON site_pages FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
 CREATE POLICY "Admin Insert pages" ON site_pages FOR INSERT TO authenticated WITH CHECK (true);
 
--- Policies for projects
+-- Projects
 CREATE POLICY "Public Read projects" ON projects FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY "Admin All projects" ON projects FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- Policies for blog_posts
+-- Blog Posts
 CREATE POLICY "Public Read blog" ON blog_posts FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY "Admin All blog" ON blog_posts FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- Policies for thoughts
+-- Thoughts (Fixed: Authenticated users can do everything)
 CREATE POLICY "Public Read thoughts" ON thoughts FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY "Admin All thoughts" ON thoughts FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Authenticated All thoughts" ON thoughts FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- Policies for resonance
+-- Resonance
 CREATE POLICY "Public Read resonance" ON resonance FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY "Admin All resonance" ON resonance FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- =========================================
+-- NOTES FOR CONTENT UPDATES
+-- =========================================
+-- 
+-- About page focus section now supports these fields in content JSON:
+--   focus.cta_button: "See What I'm Working On"
+--   focus.cta_href: "/now"
+--
+-- Home page contact_section supports these fields:
+--   name_label, email_label, message_label
+--   name_placeholder, email_placeholder, message_placeholder
+--   success_message
+--
+-- =========================================
