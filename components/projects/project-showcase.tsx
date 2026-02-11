@@ -16,26 +16,27 @@ interface ProjectShowcaseProps {
 export function ProjectShowcase({ content, projects }: ProjectShowcaseProps) {
     const [activeFilter, setActiveFilter] = useState('All');
 
-    // featured project is the first one marked is_featured, or just the first one
-    const featuredProject = projects.find(p => p.is_featured) || projects[0];
-
-    // Remaining projects for the grid
-    const gridProjects = useMemo(() => {
-        return projects.filter(p => p.id !== featuredProject?.id);
-    }, [projects, featuredProject]);
+    // Sort projects with featured ones first
+    const sortedProjects = useMemo(() => {
+        return [...projects].sort((a, b) => {
+            if (a.is_featured && !b.is_featured) return -1;
+            if (!a.is_featured && b.is_featured) return 1;
+            return 0;
+        });
+    }, [projects]);
 
     // Extract unique tags for filter
     const filters = useMemo(() => {
         const tags = new Set<string>();
-        gridProjects.forEach(p => p.tech_stack?.forEach(t => tags.add(t)));
+        sortedProjects.forEach(p => p.tech_stack?.forEach(t => tags.add(t)));
         return ['All', ...Array.from(tags).sort()];
-    }, [gridProjects]);
+    }, [sortedProjects]);
 
     // Filter logic
     const filteredProjects = useMemo(() => {
-        if (activeFilter === 'All') return gridProjects;
-        return gridProjects.filter(p => p.tech_stack?.includes(activeFilter));
-    }, [activeFilter, gridProjects]);
+        if (activeFilter === 'All') return sortedProjects;
+        return sortedProjects.filter(p => p.tech_stack?.includes(activeFilter));
+    }, [activeFilter, sortedProjects]);
 
     return (
         <main className="relative min-h-screen pb-32">
