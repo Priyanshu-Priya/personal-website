@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FolderOpen } from 'lucide-react';
+import { FolderOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ShowcaseCard, type Project } from './showcase-card';
 import { TextReveal } from '@/components/ui/text-reveal';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,23 @@ interface ProjectShowcaseProps {
 
 export function ProjectShowcase({ content, projects }: ProjectShowcaseProps) {
     const [activeFilter, setActiveFilter] = useState('All');
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
+
+    // Drag-to-scroll state
+    const isDragging = useRef(false);
+    const dragStartX = useRef(0);
+    const dragScrollLeft = useRef(0);
+    const hasDragged = useRef(false);
+
+    // Check scroll state
+    const updateScrollState = useCallback(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+        setCanScrollLeft(el.scrollLeft > 2);
+        setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+    }, []);
 
     // Sort projects with featured ones first
     const sortedProjects = useMemo(() => {
@@ -37,6 +54,57 @@ export function ProjectShowcase({ content, projects }: ProjectShowcaseProps) {
         if (activeFilter === 'All') return sortedProjects;
         return sortedProjects.filter(p => p.tech_stack?.includes(activeFilter));
     }, [activeFilter, sortedProjects]);
+
+    useEffect(() => {
+        updateScrollState();
+        const el = scrollRef.current;
+        if (!el) return;
+        const observer = new ResizeObserver(updateScrollState);
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [updateScrollState, filters]);
+
+    const scroll = useCallback((direction: 'left' | 'right') => {
+        const el = scrollRef.current;
+        if (!el) return;
+        el.scrollBy({ left: direction === 'left' ? -200 : 200, behavior: 'smooth' });
+    }, []);
+
+    // Drag-to-scroll handlers (YouTube-style)
+    const handleMouseDown = useCallback((e: React.MouseEvent) => {
+        const el = scrollRef.current;
+        if (!el) return;
+        isDragging.current = true;
+        hasDragged.current = false;
+        dragStartX.current = e.pageX - el.offsetLeft;
+        dragScrollLeft.current = el.scrollLeft;
+        el.style.cursor = 'grabbing';
+        el.style.userSelect = 'none';
+    }, []);
+
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        if (!isDragging.current) return;
+        const el = scrollRef.current;
+        if (!el) return;
+        e.preventDefault();
+        const x = e.pageX - el.offsetLeft;
+        const walk = x - dragStartX.current;
+        if (Math.abs(walk) > 5) hasDragged.current = true;
+        el.scrollLeft = dragScrollLeft.current - walk;
+    }, []);
+
+    const handleMouseUp = useCallback(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+        isDragging.current = false;
+        el.style.cursor = 'grab';
+        el.style.userSelect = '';
+    }, []);
+
+    const handleFilterClick = useCallback((filter: string) => {
+        if (hasDragged.current) return; // Ignore click after drag
+        setActiveFilter(filter);
+    }, []);
 
     return (
         <main className="relative min-h-screen pb-32">
@@ -77,22 +145,85 @@ export function ProjectShowcase({ content, projects }: ProjectShowcaseProps) {
                 </motion.header>
 
                 {/* Filter Bar */}
-                <div className="sticky top-20 z-40 mb-8 py-2 bg-slate-950/80 backdrop-blur-xl border-y border-white/5 -mx-6 px-6 md:mx-0 md:px-0 md:bg-transparent md:backdrop-blur-none md:border-none md:static">
-                    <div className="flex items-center overflow-x-auto overflow-y-hidden pb-2 md:pb-0 hide-scrollbar gap-2 md:flex-wrap md:justify-center">
-                        {filters.map((filter) => (
-                            <button
-                                key={filter}
-                                onClick={() => setActiveFilter(filter)}
-                                className={cn(
-                                    "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300",
-                                    activeFilter === filter
-                                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 scale-105"
-                                        : "bg-slate-900/50 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800"
-                                )}
+                <div className="sticky top-20 z-40 mb-8 py-2.5 bg-slate-950/80 backdrop-blur-xl border-y border-white/5 -mx-6 px-2">
+                    <div className="relative flex items-center gap-1">
+                        {/* Left scroll button */}
+                        <button
+                            onClick={() => scroll('left')}
+                            className={cn(
+                                "flex shrink-0 items-center justify-center rounded-full bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white transition-all duration-200 overflow-hidden",
+                                canScrollLeft ? "w-7 h-7 border border-slate-700/50" : "w-0 h-7 opacity-0 pointer-events-none border-0 p-0"
+                            )}
+                            aria-label="Scroll filters left"
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                        </button>
+
+                        {/* Scrollable filters */}
+                        <div className="relative flex-1 min-w-0">
+                            {/* Left fade */}
+                            <div className={cn(
+                                "absolute left-0 top-0 bottom-0 w-6 bg-linear-to-r from-slate-950/80 to-transparent z-10 pointer-events-none transition-opacity duration-200",
+                                canScrollLeft ? "opacity-100" : "opacity-0"
+                            )} />
+                            {/* Right fade */}
+                            <div className={cn(
+                                "absolute right-0 top-0 bottom-0 w-6 bg-linear-to-l from-slate-950/80 to-transparent z-10 pointer-events-none transition-opacity duration-200",
+                                canScrollRight ? "opacity-100" : "opacity-0"
+                            )} />
+
+                            <div
+                                ref={scrollRef}
+                                onScroll={updateScrollState}
+                                onMouseDown={handleMouseDown}
+                                onMouseMove={handleMouseMove}
+                                onMouseUp={handleMouseUp}
+                                onMouseLeave={handleMouseUp}
+                                className="flex items-center overflow-x-auto overflow-y-hidden gap-1.5 px-1 cursor-grab active:cursor-grabbing"
+                                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                             >
-                                {filter}
-                            </button>
-                        ))}
+                                {filters.map((filter) => {
+                                    const count = filter === 'All'
+                                        ? projects.length
+                                        : projects.filter(p => p.tech_stack?.includes(filter)).length;
+
+                                    return (
+                                        <button
+                                            key={filter}
+                                            onClick={() => handleFilterClick(filter)}
+                                            className={cn(
+                                                "flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 shrink-0",
+                                                activeFilter === filter
+                                                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                                                    : "bg-slate-900/60 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-700/50"
+                                            )}
+                                        >
+                                            {filter}
+                                            <span className={cn(
+                                                "text-[10px] font-semibold px-1.5 py-0.5 rounded-full min-w-[20px] text-center transition-colors",
+                                                activeFilter === filter
+                                                    ? "bg-white/20 text-white"
+                                                    : "bg-slate-800 text-slate-500"
+                                            )}>
+                                                {count}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Right scroll button */}
+                        <button
+                            onClick={() => scroll('right')}
+                            className={cn(
+                                "flex shrink-0 items-center justify-center rounded-full bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white transition-all duration-200 overflow-hidden",
+                                canScrollRight ? "w-7 h-7 border border-slate-700/50" : "w-0 h-7 opacity-0 pointer-events-none border-0 p-0"
+                            )}
+                            aria-label="Scroll filters right"
+                        >
+                            <ChevronRight className="w-4 h-4" />
+                        </button>
                     </div>
                 </div>
 
