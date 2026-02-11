@@ -64,13 +64,13 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                 <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
             </div>
 
-            <div className="container max-w-7xl mx-auto px-6 py-16 lg:py-24">
+            <div className="container max-w-7xl mx-auto px-6 pt-24 pb-16 lg:py-24">
                 {/* Back Link */}
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="mb-8 lg:mb-12"
+                    className="mb-10 lg:mb-12"
                 >
                     <Link
                         href="/work/projects"
@@ -82,7 +82,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                 </motion.div>
 
                 {/* Split Layout Grid */}
-                <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                <div className="grid lg:grid-cols-2 gap-6 lg:gap-16 items-center">
                     {/* Left Side - Context */}
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
