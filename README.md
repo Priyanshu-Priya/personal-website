@@ -1,363 +1,307 @@
-<<<<<<< HEAD
-# Personal Website
+# 📌 Personal Website – Digital Studio & Portfolio
 
-A modern, full-stack personal portfolio website built with **Next.js 16**, **Supabase**, and **Framer Motion**. Features a complete CMS dashboard for content management, dynamic pages, and beautiful animations.
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge\&logo=next.js\&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge\&logo=typescript\&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge\&logo=supabase\&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge\&logo=tailwind-css\&logoColor=white)
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
-![Supabase](https://img.shields.io/badge/Supabase-Database-green?logo=supabase)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?logo=tailwindcss)
+A modern, full-stack **personal website and digital studio platform** built using **Next.js, Supabase, and modern UI/UX tooling**.
+It serves as a dynamic portfolio, knowledge hub, writing platform, and content management system.
 
----
-
-## 🧩 Features
-
-### 🏠 Home Page
-- **Hero Section** — Animated intro with status badge, call-to-action buttons
-- **Featured Projects** — Bento grid showcasing top projects
-- **Tech Stack Marquee** — Infinite scrolling tech stack display
-- **Latest Content** — Blog posts, thoughts feed snippets
-- **Contact Form** — Integrated contact form section
-
-### 📚 Library Section
-- **Blog** — Long-form articles with MDX, syntax highlighting, math support
-- **Thoughts** — Short, raw insights with mood tags (micro-blogging)
-- **Resonance** — Curated influences with commentary and resonance scores
-
-### 📂 Projects
-- Showcase grid layout with featured project highlight
-- Project detail pages with case study format
-- Previous/Next project navigation
-- Filter by "Working On" status
-- Tech stack tags, GitHub/Live/Demo links
-
-### 👤 About Page
-- Background & education section
-- Skills & technologies grid
-- Current focus with dynamic CTA button
-- Social links integration
-
-### 🕐 Now Page
-- Current focus areas
-- Projects currently working on
-- Learning journey updates
-- Recent thoughts feed
-
-### 📞 Contact
-- Dedicated contact page with form
-- Reusable contact form component (Home + Contact page)
-- Email integration via Resend
-- Location & availability status
-
-### 🛠 Admin Dashboard
-- **Page Editor** — Edit all page content via structured JSON
-- **Projects** — Full CRUD with markdown editor, featured toggle
-- **Blog Posts** — Draft/publish workflow, cover images, tags
-- **Thoughts** — Quick add with mood selection
-- **Resonance** — Manage curated resources with scores
-- **Global Config** — Site settings, navigation, social links
-- **Section Ordering** — Drag-and-drop section reordering
+🌐 **Live Website:** [https://priyanshupriya.vercel.app/](https://priyanshupriya.vercel.app/)
+📦 **Repository:** [https://github.com/Priyanshu-Priya/personal-website](https://github.com/Priyanshu-Priya/personal-website)
 
 ---
 
-## 🛠️ Tech Stack
+## 🧠 Project Vision
 
-| Category | Technologies |
-|----------|-------------|
-| **Framework** | Next.js 16, React 19 |
-| **Language** | TypeScript 5 |
-| **Styling** | Tailwind CSS 4, Framer Motion |
-| **Database** | Supabase (PostgreSQL) |
-| **Auth** | Supabase Auth |
-| **Content** | Velite (MDX), react-markdown |
-| **Email** | Resend |
-| **UI Components** | Radix UI, Lucide Icons |
+This project is designed as more than a portfolio — it is a **living digital ecosystem** that showcases work, thoughts, curated inspirations, and ongoing learning.
+
+### Primary Objectives
+
+• Present projects with detailed case studies
+• Maintain a scalable personal knowledge & writing system
+• Provide editorial-quality reading and browsing experience
+• Build a reusable personal CMS architecture
+• Maintain full content control without third-party CMS platforms
+
+---
+
+## ✨ Features
+
+---
+
+### 🏠 Public Platform
+
+#### Home
+
+* Animated hero section
+* Featured projects bento grid
+* Technology marquee animation
+* Integrated contact section
+* Smooth page transitions and motion design
+
+#### Projects
+
+* Case study driven portfolio
+* Status tagging (Working On / Completed / Archived)
+* Project galleries and tech stack highlights
+* Featured project layout support
+
+#### Library (Knowledge Hub)
+
+##### 📝 Blog
+
+* Long-form MDX articles
+* Syntax highlighting
+* Rich typography and structured content
+
+##### 💭 Thoughts
+
+* Micro-blogging style updates
+* Mood tagging system
+* Timeline-based feed
+
+##### 📚 Resonance
+
+* Curated books, articles, and tools
+* Personal rating & insights system
+
+#### 📍 Now Page
+
+* Current learning focus
+* Active projects
+* Recent updates & experiments
+
+#### 👤 About Page
+
+* Skills visualization
+* Personal background
+* Dynamic social and contact links
+
+#### 📩 Contact System
+
+* Form available on:
+
+  * Dedicated Contact Page
+  * Home Page Contact Section
+* Stores messages in database
+* Sends real-time email notification
+
+---
+
+### 🛠 Admin CMS Dashboard
+
+A custom-built internal CMS allowing full content control.
+
+#### Core CMS Capabilities
+
+* Global Page Content Editor (JSON Based)
+* Full CRUD Project Management
+* Draft / Publish workflow for content
+* Blog & Thoughts content control
+* Resonance resource manager
+* Navigation & Footer configuration
+* SEO content control
+* Drag & Drop homepage section ordering
+
+---
+
+## 🧰 Tech Stack
+
+### Framework & Language
+
+* Next.js 15 (App Router + Server Components)
+* TypeScript
+
+### UI / Styling
+
+* Tailwind CSS
+* Shadcn/UI
+* Radix UI
+* Framer Motion
+* Lucide Icons
+
+### Backend & Infrastructure
+
+* Supabase (PostgreSQL Database)
+* Supabase Auth
+* Supabase Storage
+
+### Content System
+
+* MDX Content Rendering
+* Velite Content Layer
+
+### Communication & Automation
+
+* Resend Email API
+* Server Actions / API Routes
+
+### Deployment
+
+* Vercel Hosting & CI/CD
 
 ---
 
 ## 📁 Project Structure
 
 ```
-├── app/
-│   ├── (dashboard)/    # Admin CMS routes
-│   ├── (public)/       # Public-facing pages
-│   └── auth/           # Authentication routes
-├── components/
-│   ├── admin/          # Dashboard components
-│   ├── home/           # Home page sections
-│   ├── library/        # Blog, thoughts, resonance
-│   ├── projects/       # Project cards, showcase
-│   ├── shared/         # Reusable components (CTA, Social)
-│   └── ui/             # Base UI components
-├── db/
-│   └── init_supabase.sql  # Complete database schema
-├── lib/                # Utilities, Supabase client
-├── types/              # TypeScript definitions
-└── content/            # Static MDX content
+app/
+ ├── (public)/        → Public website routes
+ ├── (dashboard)/     → Protected Admin CMS
+ ├── auth/            → Authentication routes
+
+components/
+ ├── admin/           → CMS Components
+ ├── home/            → Landing sections
+ ├── projects/        → Portfolio layouts
+ ├── library/         → Blog / Thoughts / Resonance UI
+ └── ui/              → Reusable Shadcn components
+
+content/              → MDX Static Content
+db/                   → Database initialization scripts
+lib/                  → Utilities & Supabase clients
+types/                → TypeScript type definitions
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🗄 Database Schema
+
+The platform uses **Supabase PostgreSQL** with **Row Level Security (RLS)**.
+
+| Table         | Description                                        |
+| ------------- | -------------------------------------------------- |
+| `site_config` | Stores navigation, footer, SEO, and global content |
+| `projects`    | Portfolio projects and metadata                    |
+| `blog_posts`  | Long-form articles                                 |
+| `thoughts`    | Micro blogging entries                             |
+| `resonance`   | Curated external resources                         |
+| `contacts`    | Contact form submissions                           |
+
+---
+
+## 🔐 Security
+
+* Supabase Row Level Security (RLS)
+* Admin-only content modification
+* Protected dashboard routes
+* Secure environment variable handling
+
+---
+
+## ⚙️ Getting Started
 
 ### Prerequisites
-- Node.js 18+
-- Supabase account
-- Resend account (for emails)
 
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/personal-website.git
-   cd personal-website
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env.local
-   ```
-   
-   Required variables:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   RESEND_API_KEY=your_resend_key
-   ```
-
-4. **Initialize database**
-   - Go to Supabase SQL Editor
-   - Run the contents of `db/init_supabase.sql`
-
-5. **Run development server**
-   ```bash
-   npm run dev
-   ```
-
-   Open [http://localhost:3000](http://localhost:3000)
+* Node.js 18+
+* Supabase Account
+* Resend Account
 
 ---
 
-## 📝 Available Scripts
+### 1️⃣ Clone Repository
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run db:reset` | Reset database |
+```
+git clone https://github.com/Priyanshu-Priya/personal-website.git
+cd personal-website
+```
 
 ---
 
-## 🗄️ Database Schema
+### 2️⃣ Install Dependencies
 
-| Table | Description |
-|-------|-------------|
-| `site_config` | Global site configuration (JSON) |
-| `site_pages` | Page content (Home, About, etc.) |
-| `projects` | Portfolio projects |
-| `blog_posts` | Blog articles |
-| `thoughts` | Micro-blog entries |
-| `resonance` | Curated external resources |
+```
+npm install
+```
 
-All tables have Row Level Security (RLS) enabled.
+---
+
+### 3️⃣ Setup Environment Variables
+
+Create `.env.local`
+
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+RESEND_API_KEY=
+```
+
+---
+
+### 4️⃣ Setup Database
+
+1. Open Supabase Dashboard
+2. Go to SQL Editor
+3. Run:
+
+```
+db/init_supabase.sql
+```
+
+4. Create Admin User:
+
+* Sign up via `/auth/signup`
+* Disable public signup afterward
+
+---
+
+### 5️⃣ Run Development Server
+
+```
+npm run dev
+```
+
+Access:
+
+• Website → [http://localhost:3000](http://localhost:3000)
+• Dashboard → [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
 
 ---
 
 ## 🎨 Customization
 
-### Content
-Edit page content through the dashboard at `/dashboard` or directly modify the `site_pages` table in Supabase.
-
 ### Styling
-- Global styles: `app/globals.css`
-- Tailwind config: Inline in CSS with `@theme`
-- Component styles: Tailwind classes
 
-### Adding Pages
-1. Create route in `app/(public)/your-page/`
-2. Add page content type in `types/content.ts`
-3. Add page slug to database
-4. Create editor in dashboard if needed
+* Global CSS → `app/globals.css`
+* Theme → Tailwind config / CSS variables
 
----
+### Content Management
 
-## 📄 License
-
-MIT License - feel free to use this for your own portfolio!
+* Static content → `/content`
+* Dynamic content → Admin Dashboard / Supabase
 
 ---
 
-## 🙏 Acknowledgments
+## 📈 Future Enhancements
 
-- [Next.js](https://nextjs.org/)
-- [Supabase](https://supabase.io/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Radix UI](https://www.radix-ui.com/)
-=======
-# 📌 Personal Website
-
-A modern, full-stack **personal digital studio** built with Next.js and Supabase — designed to document work, ideas, and influences with clarity and depth. This isn’t just a portfolio: it’s a **living archive** of thoughts, writing, and projects that evolves over time.
-
-🌐 Live Demo: [Click Here](https://priyanshupriya.vercel.app/)
+* Analytics dashboard
+* Newsletter system
+* Content scheduling
+* Multi-theme support
+* Search & indexing
+* Performance monitoring
+* AI-assisted content tagging
 
 ---
 
-## 🧠 Project Overview
+## 👨‍💻 Author
 
-This **Personal Website** is a professional, scalable platform that combines:
-✔ Personal introduction  
-✔ Projects showcase  
-✔ Multi-type content (Blog, Thoughts, Resonance)  
-✔ Contact form with database storage and email forwarding  
-✔ Home section + separate Contact page  
-✔ Clean, editorial UI/UX
+Priyanshu Priya
+Full Stack Developer | AI/ML Enginee | DrevOps Practitioner
 
-It is focused on **clarity, intentional design, and long-term growth** rather than trendy effects. It serves multiple audiences:
-- Recruiters
-- Peers
-- General visitors
+📧 [priyanshupriyacodes@gmail.com](mailto:priyanshupriyacodes@gmail.com)
+🌐 [https://priyanshupriya.vercel.app/](https://priyanshupriya.vercel.app/)
+💻 [https://github.com/Priyanshu-Priya](https://github.com/Priyanshu-Priya)
 
 ---
 
-## 🚀 Tech Stack
+## 📜 License
 
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js (App Router) |
-| Frontend | TypeScript, Tailwind CSS, Framer Motion |
-| UI Components | shadcn/ui, Lucide Icons |
-| Backend Services | Supabase (Auth, Database, Storage) |
-| Email | Resend (or equivalent SMTP provider) |
-| Deployment | Vercel |
+Distributed under the MIT License.
 
 ---
 
-## 🧩 Features
-
-### 🏠 Home Page
-- Intro Hero
-- Featured Projects
-- Latest Content Snippets
-- Contact Form Section
-
-### 📚 Library Section
-- **Blog** — Long-form content (MDX)
-- **Thoughts** — Short, raw insights
-- **Resonance** — Curated influences with notes
-
-### 📂 Projects
-- Sorted by date
-- Featured projects highlighted
-- Deep project detail pages
-
-### 📞 Contact
-- Dedicated Contact page
-- Reusable contact form (Home + Contact page)
-
-### 🛠 Admin Dashboard 
-- Add / Edit content
-- Manage messages
-- Draft & publish workflow
-
----
-
-
-## 🛠 Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/Priyanshu-Priya/personal-website.git
-cd personal-website
-````
-
-### 2. Install dependencies
-
-```bash
-npm install
-# or
-yarn
-# or
-pnpm install
-```
-
-### 3. Setup Environment Variables
-
-Create a `.env.local` with:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-RESEND_API_KEY=your_resend_api_key
-
-```
-
-> These keys are used to connect the website to Supabase and send email notifications.
-
-### 4. Run Locally
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## 📩 Contact Form Behavior
-
-When a user submits:
-
-1. The message is saved in the **Supabase database**.
-2. An email is sent to `priyanshupriyacodes@gmail.com`.
-
-This dual workflow ensures:
-
-* reliable storage
-* prompt notification
-
----
-
-## 🧠 Design Philosophy
-
-* **Editorial UI**: Calm typography, generous spacing
-* **Content-first experience**
-* **Minimal distractions**
-* **Professional but personable**
-
-Every UI element should support reading, scanning, or reflection — not interrupt it.
-
----
-
-## 📅 Roadmap
-
-✔ Core pages (Home, Projects, Library)
-✔ Contact form + DB + email
-✔ Resonance system
-✔ Thought + Blog sections
-✔ Dashboard for content management
-
-
----
-
-## 📫 Connect
-
-**Email:** [priyanshupriyacodes@gmail.com](mailto:priyanshupriyacodes@gmail.com)
-
----
-
-## 🧾 License
-
-This project is open-source and available under the MIT License.
-
-
->>>>>>> ded081725dc71545019943382a052473d57509a3
+**Built with 💜 by Priyanshu Priya**
