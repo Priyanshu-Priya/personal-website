@@ -88,12 +88,12 @@ export default async function DashboardResonancePage() {
                         <TableBody>
                             {resonanceEntries.map((entry) => (
                                 <TableRow key={entry.id} className="border-slate-800">
-                                    <TableCell className="font-medium text-white">
+                                    <TableCell className="font-medium text-white whitespace-normal min-w-[200px]">
                                         <a
                                             href={entry.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="hover:text-indigo-400 transition-colors"
+                                            className="hover:text-indigo-400 transition-colors line-clamp-2"
                                         >
                                             {entry.title}
                                         </a>
