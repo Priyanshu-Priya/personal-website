@@ -65,43 +65,48 @@ export function ResonanceSection({ content, resonance }: ResonanceSectionProps) 
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                         >
-                            <GlowCard glowColor="amber" className="h-full">
-                                <div className="p-5 h-full flex flex-col">
-                                    {/* Type badge */}
-                                    <span className="inline-flex self-start text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 capitalize mb-3">
-                                        {item.type}
-                                    </span>
+                            <Link
+                                href={`/library/resonance#item-${item.id}`}
+                                className="block h-full group/card cursor-pointer"
+                            >
+                                <GlowCard glowColor="amber" className="h-full transition-transform duration-200 group-hover/card:-translate-y-1">
+                                    <div className="p-5 h-full flex flex-col">
+                                        {/* Type badge */}
+                                        <span className="inline-flex self-start text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 capitalize mb-3">
+                                            {item.type}
+                                        </span>
 
-                                    {/* Title */}
-                                    <h3 className="text-white font-medium flex-1 line-clamp-2 mb-2">
-                                        {item.title}
-                                    </h3>
+                                        {/* Title */}
+                                        <h3 className="text-white font-medium flex-1 line-clamp-2 mb-2 group-hover/card:text-amber-300 transition-colors duration-200">
+                                            {item.title}
+                                        </h3>
 
-                                    {/* Commentary */}
-                                    {item.commentary && (
-                                        <p className="text-xs text-slate-500 line-clamp-1 mb-3">
-                                            {item.commentary}
-                                        </p>
-                                    )}
+                                        {/* Commentary */}
+                                        {item.commentary && (
+                                            <p className="text-xs text-slate-500 line-clamp-1 mb-3">
+                                                {item.commentary}
+                                            </p>
+                                        )}
 
-                                    {/* Score */}
-                                    <div className="flex gap-1">
-                                        {Array.from({ length: 5 }).map((_, i) => (
-                                            <motion.span
-                                                key={i}
-                                                className={`w-2 h-2 rounded-full ${i < item.resonance_score
-                                                    ? 'bg-amber-400'
-                                                    : 'bg-slate-700'
-                                                    }`}
-                                                initial={{ scale: 0 }}
-                                                whileInView={{ scale: 1 }}
-                                                viewport={{ once: true }}
-                                                transition={{ delay: index * 0.1 + i * 0.05 }}
-                                            />
-                                        ))}
+                                        {/* Score */}
+                                        <div className="flex gap-1">
+                                            {Array.from({ length: 5 }).map((_, i) => (
+                                                <motion.span
+                                                    key={i}
+                                                    className={`w-2 h-2 rounded-full ${i < item.resonance_score
+                                                        ? 'bg-amber-400'
+                                                        : 'bg-slate-700'
+                                                        }`}
+                                                    initial={{ scale: 0 }}
+                                                    whileInView={{ scale: 1 }}
+                                                    viewport={{ once: true }}
+                                                    transition={{ delay: index * 0.1 + i * 0.05 }}
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            </GlowCard>
+                                </GlowCard>
+                            </Link>
                         </motion.div>
                     ))}
                 </div>

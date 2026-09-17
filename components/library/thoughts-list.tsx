@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { Brain } from 'lucide-react';
@@ -19,6 +20,28 @@ interface ThoughtsListProps {
 }
 
 export function ThoughtsList({ thoughts }: ThoughtsListProps) {
+    const highlightedRef = useRef<string | null>(null);
+
+    useEffect(() => {
+        const hash = window.location.hash;
+        if (!hash) return;
+        const targetId = hash.slice(1); // strip leading '#'
+        const el = document.getElementById(targetId);
+        if (!el) return;
+        // Small delay so framer-motion entrance animations don't fight scroll
+        const timer = setTimeout(() => {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Add highlight ring then remove it
+            el.classList.add('ring-2', 'ring-purple-400', 'ring-offset-2', 'ring-offset-slate-950', 'rounded-xl');
+            highlightedRef.current = targetId;
+            const remove = setTimeout(() => {
+                el.classList.remove('ring-2', 'ring-purple-400', 'ring-offset-2', 'ring-offset-slate-950', 'rounded-xl');
+            }, 2000);
+            return () => clearTimeout(remove);
+        }, 600);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <main className="relative min-h-screen">
             {/* Background orbs */}
@@ -78,6 +101,7 @@ export function ThoughtsList({ thoughts }: ThoughtsListProps) {
                             {thoughts.map((thought, index) => (
                                 <motion.div
                                     key={thought.id}
+                                    id={`item-${thought.id}`}
                                     initial={{ opacity: 0, x: -20 }}
                                     whileInView={{ opacity: 1, x: 0 }}
                                     viewport={{ once: true }}

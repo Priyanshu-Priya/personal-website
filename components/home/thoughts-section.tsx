@@ -58,23 +58,28 @@ export function ThoughtsSection({ content, thoughts }: ThoughtsSectionProps) {
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                         >
-                            <GlowCard glowColor="violet" className="h-full">
-                                <div className="p-6 h-full flex flex-col">
-                                    <p className="text-slate-300 text-sm leading-relaxed flex-1 line-clamp-4">
-                                        {thought.content}
-                                    </p>
-                                    <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-800/50">
-                                        <time className="text-xs text-slate-500 font-mono">
-                                            {format(new Date(thought.created_at), 'MMM dd')}
-                                        </time>
-                                        {thought.mood && (
-                                            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                                                {thought.mood}
-                                            </span>
-                                        )}
+                            <Link
+                                href={`/library/thoughts#item-${thought.id}`}
+                                className="block h-full group/card cursor-pointer"
+                            >
+                                <GlowCard glowColor="violet" className="h-full transition-transform duration-200 group-hover/card:-translate-y-1">
+                                    <div className="p-6 h-full flex flex-col">
+                                        <p className="text-slate-300 text-sm leading-relaxed flex-1 line-clamp-4 group-hover/card:text-slate-200 transition-colors duration-200">
+                                            {thought.content}
+                                        </p>
+                                        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-800/50">
+                                            <time className="text-xs text-slate-500 font-mono">
+                                                {format(new Date(thought.created_at), 'MMM dd')}
+                                            </time>
+                                            {thought.mood && (
+                                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                                    {thought.mood}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </GlowCard>
+                                </GlowCard>
+                            </Link>
                         </motion.div>
                     ))}
                 </div>
