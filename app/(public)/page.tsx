@@ -45,6 +45,7 @@ interface ResonanceItem {
     commentary: string | null;
     resonance_score: number;
     created_at: string;
+    tags: string[] | null;
 }
 
 // Section configuration for dynamic ordering

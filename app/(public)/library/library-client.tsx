@@ -3,12 +3,14 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ArrowRight, FileText, Brain, BookOpen } from 'lucide-react';
+import { ArrowRight, FileText, Brain, BookOpen, ExternalLink, Quote } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 import { GradientOrb } from '@/components/ui/aurora-background';
 import { TextReveal } from '@/components/ui/text-reveal';
 import type { LibraryPageContent } from '@/types/content';
 import { ReactNode } from 'react';
+import { parseTags } from '@/lib/tags';
+import { resonanceTypeConfig, fallbackResonanceType } from '@/lib/resonance-config';
 
 interface BlogPost {
     id: string;
@@ -31,6 +33,9 @@ interface ResonanceItem {
     type: string;
     resonance_score: number;
     created_at: string;
+    tags: string[] | null;
+    url?: string | null;
+    commentary?: string | null;
 }
 
 // Section keys for ordering
@@ -163,25 +168,29 @@ export function LibraryHubClient({ content, posts, thoughts, resonance }: Librar
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
+                            transition={{ delay: index * 0.08 }}
                         >
-                            <GlowCard glowColor="violet">
-                                <div className="p-5 h-full">
-                                    <p className="text-slate-300 text-sm leading-relaxed line-clamp-4">
-                                        {thought.content}
-                                    </p>
-                                    <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800/50">
-                                        <time className="text-xs text-slate-500 font-mono">
-                                            {format(new Date(thought.created_at), 'MMM dd')}
-                                        </time>
-                                        {thought.mood && (
-                                            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400">
-                                                {thought.mood}
-                                            </span>
-                                        )}
+                            <Link href={`/library/thoughts#item-${thought.id}`} className="group/card block h-full">
+                                <div className="relative h-full rounded-xl border border-slate-800 border-l-2 border-l-purple-500/40 bg-slate-900/60 backdrop-blur-sm overflow-hidden transition-all duration-300 group-hover/card:border-slate-700 group-hover/card:border-l-purple-400/60 group-hover/card:-translate-y-1 group-hover/card:shadow-xl group-hover/card:shadow-black/30">
+                                    <div className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-br from-purple-500/4 to-transparent" />
+                                    <div className="relative p-5 flex flex-col h-full">
+                                        <Quote className="w-5 h-5 text-purple-500/40 mb-2 shrink-0" />
+                                        <p className="text-slate-300 text-sm leading-relaxed line-clamp-4 flex-1 group-hover/card:text-slate-200 transition-colors">
+                                            {thought.content}
+                                        </p>
+                                        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800/60">
+                                            <time className="text-xs text-slate-500 font-mono bg-slate-800/60 px-2 py-0.5 rounded-md border border-slate-700/40">
+                                                {format(new Date(thought.created_at), 'MMM dd')}
+                                            </time>
+                                            {thought.mood && (
+                                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 ml-auto">
+                                                    {thought.mood}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </GlowCard>
+                            </Link>
                         </motion.div>
                     ))}
                 </div>
@@ -217,33 +226,72 @@ export function LibraryHubClient({ content, posts, thoughts, resonance }: Librar
 
             {resonance.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {resonance.map((item, index) => (
-                        <motion.div
-                            key={item.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
-                        >
-                            <GlowCard glowColor="amber">
-                                <div className="p-5">
-                                    <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 capitalize">
-                                        {item.type}
-                                    </span>
-                                    <h3 className="text-white font-medium mt-3 line-clamp-2">{item.title}</h3>
-                                    <div className="flex gap-1 mt-3">
-                                        {Array.from({ length: 5 }).map((_, i) => (
-                                            <span
-                                                key={i}
-                                                className={`w-2 h-2 rounded-full ${i < item.resonance_score ? 'bg-amber-400' : 'bg-slate-700'
-                                                    }`}
-                                            />
-                                        ))}
+                    {resonance.map((item, index) => {
+                        const cfg = resonanceTypeConfig[item.type] ?? fallbackResonanceType;
+                        const Icon = cfg.icon;
+                        const tags = parseTags(item.tags);
+                        const scoreWidth = `${(item.resonance_score / 5) * 100}%`;
+                        return (
+                            <motion.div
+                                key={item.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.08 }}
+                            >
+                                <Link href={`/library/resonance#item-${item.id}`} className="group/card block h-full">
+                                    <div className="relative h-full rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm overflow-hidden transition-all duration-300 group-hover/card:border-slate-700 group-hover/card:-translate-y-1 group-hover/card:shadow-xl group-hover/card:shadow-black/30">
+                                        <div className={`absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-br ${cfg.shimmer} to-transparent`} />
+                                        <div className="relative p-5 flex flex-col h-full gap-3">
+                                            <div className="flex items-start justify-between">
+                                                <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border font-medium capitalize ${cfg.badge}`}>
+                                                    <Icon className="w-3 h-3" />
+                                                    {item.type}
+                                                </span>
+                                                {item.url && (
+                                                    <span className="opacity-0 group-hover/card:opacity-50 transition-opacity text-slate-400 mt-0.5">
+                                                        <ExternalLink className="w-3.5 h-3.5" />
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <h3 className="text-sm font-semibold text-slate-200 line-clamp-3 leading-snug group-hover/card:text-white transition-colors flex-1">
+                                                {item.title}
+                                            </h3>
+                                            {item.commentary && (
+                                                <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed italic">
+                                                    &ldquo;{item.commentary}&rdquo;
+                                                </p>
+                                            )}
+                                            <div className="flex flex-col gap-2 pt-1 border-t border-slate-800/60">
+                                                <div className="flex items-center gap-2 pt-2">
+                                                    <span className="text-[10px] text-slate-600 font-mono shrink-0 uppercase tracking-wider">resonance</span>
+                                                    <div className="flex-1 h-1 rounded-full bg-slate-800 overflow-hidden">
+                                                        <motion.div
+                                                            className={`h-full rounded-full ${cfg.bar}`}
+                                                            initial={{ width: 0 }}
+                                                            whileInView={{ width: scoreWidth }}
+                                                            viewport={{ once: true }}
+                                                            transition={{ duration: 0.7, delay: index * 0.08 + 0.2, ease: 'easeOut' }}
+                                                        />
+                                                    </div>
+                                                    <span className="text-[10px] text-slate-500 font-mono shrink-0">{item.resonance_score}/5</span>
+                                                </div>
+                                                {tags.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {tags.slice(0, 3).map((tag) => (
+                                                            <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-800 text-slate-500 border border-slate-700/50 font-mono">
+                                                                #{tag}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </GlowCard>
-                        </motion.div>
-                    ))}
+                                </Link>
+                            </motion.div>
+                        );
+                    })}
                 </div>
             ) : (
                 <div className="text-center py-8 text-slate-500">{content.resonance_section.empty_text}</div>

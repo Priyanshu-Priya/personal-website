@@ -3,15 +3,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import {
-    BookOpen, ExternalLink, BookMarked, FileText,
-    Video, Podcast, MessageCircle, ChevronDown,
-} from 'lucide-react';
-import { GlowCard } from '@/components/ui/glow-card';
+import { BookOpen, ExternalLink, ChevronDown } from 'lucide-react';
 import { GradientOrb } from '@/components/ui/aurora-background';
 import { TextReveal } from '@/components/ui/text-reveal';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { parseTags } from '@/lib/tags';
+import { resonanceTypeConfig, fallbackResonanceType } from '@/lib/resonance-config';
 
 interface ResonanceEntry {
     id: string;
@@ -21,46 +19,31 @@ interface ResonanceEntry {
     commentary: string | null;
     resonance_score: number;
     created_at: string;
+    tags: string[] | null;
 }
 
 interface ResonanceListProps {
     entries: ResonanceEntry[];
 }
 
-const typeIcons = {
-    article: FileText,
-    book: BookMarked,
-    video: Video,
-    podcast: Podcast,
-    tweet: MessageCircle,
-};
-
-const typeColors = {
-    article: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    book: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    video: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-    podcast: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-    tweet: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
-};
+const fallbackCfg = fallbackResonanceType;
 
 // Commentary longer than this gets collapsed by default
 const COLLAPSE_THRESHOLD = 300;
 
 // ─── Per-card component ────────────────────────────────────────────────────────
 function ResonanceCard({ entry, index }: { entry: ResonanceEntry; index: number }) {
-    const TypeIcon = typeIcons[entry.type] || FileText;
+    const cfg = resonanceTypeConfig[entry.type] ?? fallbackCfg;
+    const TypeIcon = cfg.icon;
+    const tags = parseTags(entry.tags);
+    const scoreWidth = `${(entry.resonance_score / 5) * 100}%`;
     const isLong = (entry.commentary?.length ?? 0) > COLLAPSE_THRESHOLD;
 
-    /**
-     * Read window.location.hash synchronously inside the useState initializer.
-     * This runs at mount time — before any useEffect fires — so the card that
-     * was deep-linked from the home screen opens immediately with zero timing gap.
-     */
     const [expanded, setExpanded] = useState<boolean>(() => {
-        if (!isLong) return true; // short commentary is always fully visible
+        if (!isLong) return true;
         if (typeof window === 'undefined') return false;
-        const hash = window.location.hash; // e.g. "#item-<uuid>"
-        return hash === `#item-${entry.id}`; // true only for the linked card
+        const hash = window.location.hash;
+        return hash === `#item-${entry.id}`;
     });
 
     const toggle = () => {
@@ -76,9 +59,9 @@ function ResonanceCard({ entry, index }: { entry: ResonanceEntry; index: number 
             transition={{ duration: 0.5, delay: index * 0.08 }}
             className="relative"
         >
-            {/* Timeline dot */}
+            {/* Timeline dot — amber thread */}
             <motion.div
-                className="absolute -left-10 top-6 w-6 h-6 rounded-full bg-slate-900 border-2 border-amber-500/50 flex items-center justify-center"
+                className="absolute -left-10 top-6 w-6 h-6 rounded-full border-2 border-amber-500/60 bg-amber-500/10 flex items-center justify-center"
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
@@ -87,54 +70,62 @@ function ResonanceCard({ entry, index }: { entry: ResonanceEntry; index: number 
                 <TypeIcon className="w-3 h-3 text-amber-400" />
             </motion.div>
 
-            {/* Entire card is the toggle target */}
+            {/* Card */}
             <div onClick={toggle} className={isLong ? 'cursor-pointer select-none' : ''}>
-                <GlowCard glowColor="amber">
-                    <div className="p-6">
+                <div className={`relative rounded-xl border border-slate-800 bg-slate-900/70 backdrop-blur-sm overflow-hidden transition-colors duration-300 hover:border-slate-700 border-l-2 ${cfg.accent}`}>
 
-                        {/* Type · Date · Chevron */}
-                        <div className="flex items-center justify-between mb-3">
+                    {/* Subtle type-tinted shimmer on the card bg */}
+                    <div className={`absolute inset-0 pointer-events-none bg-gradient-to-br ${cfg.shimmer} to-transparent`} />
+
+                    <div className="relative p-6">
+
+                        {/* ── Top row: badge · date · chevron ── */}
+                        <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <span className={`text-xs px-2.5 py-1 rounded-full border capitalize ${typeColors[entry.type] || typeColors.article}`}>
+                                {/* Type badge with icon */}
+                                <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border font-medium capitalize ${cfg.badge}`}>
+                                    <TypeIcon className="w-3 h-3" />
                                     {entry.type}
                                 </span>
-                                <time className="text-xs text-slate-500 font-mono">
+                                {/* Date chip */}
+                                <time className="inline-flex items-center text-xs text-slate-500 font-mono bg-slate-800/60 px-2 py-0.5 rounded-md border border-slate-700/40">
                                     {format(new Date(entry.created_at), 'MMM dd, yyyy')}
                                 </time>
                             </div>
 
+                            {/* Expand/collapse chevron */}
                             {isLong && (
                                 <motion.span
                                     animate={{ rotate: expanded ? 180 : 0 }}
                                     transition={{ duration: 0.25 }}
-                                    className="inline-flex shrink-0 text-amber-400/50 hover:text-amber-400 transition-colors"
+                                    className={`inline-flex shrink-0 transition-colors ${expanded ? 'text-amber-400' : 'text-slate-600'} hover:text-slate-400`}
                                 >
                                     <ChevronDown className="w-4 h-4" />
                                 </motion.span>
                             )}
                         </div>
 
-                        {/* Title + external link */}
-                        <h2 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
-                            {entry.title}
+                        {/* ── Title + external link ── */}
+                        <h2 className="text-xl font-bold text-white mb-4 flex items-start gap-2 leading-snug">
+                            <span className="flex-1">{entry.title}</span>
                             {entry.url && (
                                 <a
                                     href={entry.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    onClick={e => e.stopPropagation()} // don't toggle card
-                                    className="text-slate-500 hover:text-amber-400 transition-colors"
+                                    onClick={e => e.stopPropagation()}
+                                    className="shrink-0 mt-1 text-slate-600 hover:text-slate-300 transition-colors"
                                 >
                                     <ExternalLink className="w-4 h-4" />
                                 </a>
                             )}
                         </h2>
 
-                        {/* Commentary — collapsible markdown */}
+                        {/* ── Commentary — collapsible markdown ── */}
                         {entry.commentary && (
-                            <div className="mb-4">
-                                <div className="relative">
-                                    {/* AnimatePresence key trick: swap key so height animates */}
+                            <div className="mb-5">
+                                {/* Left quote accent bar */}
+                                <div className={`relative border-l-2 pl-4 ${cfg.accent}`}>
                                     <AnimatePresence initial={false} mode="wait">
                                         <motion.div
                                             key={expanded ? 'open' : 'closed'}
@@ -146,7 +137,7 @@ function ResonanceCard({ entry, index }: { entry: ResonanceEntry; index: number 
                                             <div
                                                 className={[
                                                     'prose prose-sm prose-invert max-w-none text-sm leading-relaxed',
-                                                    'prose-p:text-slate-400 prose-p:my-1',
+                                                    'prose-p:text-slate-400 prose-p:my-1.5',
                                                     'prose-strong:text-slate-200 prose-strong:font-semibold',
                                                     'prose-em:text-slate-300',
                                                     'prose-a:text-amber-400 prose-a:no-underline hover:prose-a:underline',
@@ -165,31 +156,46 @@ function ResonanceCard({ entry, index }: { entry: ResonanceEntry; index: number 
 
                                     {/* Fade overlay when collapsed */}
                                     {isLong && !expanded && (
-                                        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none" />
+                                        <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-slate-900/90 to-transparent pointer-events-none" />
                                     )}
                                 </div>
                             </div>
                         )}
 
-                        {/* Resonance score */}
-                        <div className="flex items-center gap-2">
-                            <span className="text-xs text-slate-500">Resonance:</span>
-                            <div className="flex gap-1">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                    <motion.span
-                                        key={i}
-                                        className={`w-2.5 h-2.5 rounded-full ${i < entry.resonance_score ? 'bg-amber-400' : 'bg-slate-700'}`}
-                                        initial={{ scale: 0 }}
-                                        whileInView={{ scale: 1 }}
+                        {/* ── Footer: score bar + tags ── */}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-4 border-t border-slate-800/60">
+                            {/* Animated score bar */}
+                            <div className="flex items-center gap-2 shrink-0">
+                                <span className="text-[10px] text-slate-600 font-mono uppercase tracking-wider">resonance</span>
+                                <div className="w-24 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                                    <motion.div
+                                        className={`h-full rounded-full ${cfg.bar}`}
+                                        initial={{ width: 0 }}
+                                        whileInView={{ width: scoreWidth }}
                                         viewport={{ once: true }}
-                                        transition={{ delay: index * 0.08 + i * 0.05 }}
+                                        transition={{ duration: 0.8, delay: index * 0.08 + 0.3, ease: 'easeOut' }}
                                     />
-                                ))}
+                                </div>
+                                <span className="text-[10px] text-slate-500 font-mono">{entry.resonance_score}/5</span>
                             </div>
+
+                            {/* Tags */}
+                            {tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 sm:ml-auto">
+                                    {tags.map((tag) => (
+                                        <span
+                                            key={tag}
+                                            className="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700/50 font-mono"
+                                        >
+                                            #{tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                     </div>
-                </GlowCard>
+                </div>
             </div>
         </motion.div>
     );

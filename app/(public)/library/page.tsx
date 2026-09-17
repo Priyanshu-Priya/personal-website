@@ -24,6 +24,7 @@ interface ResonanceItem {
     type: string;
     resonance_score: number;
     created_at: string;
+    tags: string[] | null;
 }
 
 export default async function LibraryPage() {
@@ -46,7 +47,7 @@ export default async function LibraryPage() {
             .limit(3),
         supabase
             .from('resonance')
-            .select('id, title, type, resonance_score, created_at')
+            .select('id, title, type, resonance_score, created_at, tags')
             .order('created_at', { ascending: false })
             .limit(4),
     ]);

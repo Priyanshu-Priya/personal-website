@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import { Brain, ChevronDown } from 'lucide-react';
-import { GlowCard } from '@/components/ui/glow-card';
+import { Brain, ChevronDown, Quote } from 'lucide-react';
 import { GradientOrb } from '@/components/ui/aurora-background';
 import { TextReveal } from '@/components/ui/text-reveal';
 
@@ -52,7 +51,7 @@ function ThoughtCard({ thought, index }: { thought: Thought; index: number }) {
         >
             {/* Timeline dot */}
             <motion.div
-                className="absolute -left-10 top-5 w-6 h-6 rounded-full bg-slate-900 border-2 border-purple-500/50 flex items-center justify-center"
+                className="absolute -left-10 top-5 w-6 h-6 rounded-full bg-purple-500/10 border-2 border-purple-500/60 flex items-center justify-center"
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
@@ -61,60 +60,71 @@ function ThoughtCard({ thought, index }: { thought: Thought; index: number }) {
                 <div className="w-2 h-2 rounded-full bg-purple-400" />
             </motion.div>
 
-            {/* Entire card is the toggle target */}
+            {/* Card */}
             <div onClick={toggle} className={isLong ? 'cursor-pointer select-none' : ''}>
-                <GlowCard glowColor="violet">
-                    <div className="p-6">
+                <div className="relative rounded-xl border border-slate-800 border-l-2 border-l-purple-500/40 bg-slate-900/70 backdrop-blur-sm overflow-hidden transition-colors duration-300 hover:border-slate-700 hover:border-l-purple-400/60">
 
-                        {/* Content + ChevronDown for long thoughts */}
+                    {/* Subtle shimmer */}
+                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-purple-500/3 to-transparent" />
+
+                    <div className="relative p-6">
+
+                        {/* Content block */}
                         <div className="relative">
+                            {/* Chevron for long thoughts */}
                             {isLong && (
                                 <motion.span
                                     animate={{ rotate: expanded ? 180 : 0 }}
                                     transition={{ duration: 0.25 }}
-                                    className="absolute top-0 right-0 inline-flex shrink-0 text-purple-400/50 hover:text-purple-400 transition-colors"
+                                    className={`absolute top-0 right-0 inline-flex shrink-0 transition-colors ${expanded ? 'text-purple-400' : 'text-slate-600'}`}
                                 >
                                     <ChevronDown className="w-4 h-4" />
                                 </motion.span>
                             )}
 
-                            <AnimatePresence initial={false} mode="wait">
-                                <motion.div
-                                    key={expanded ? 'open' : 'closed'}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.2 }}
-                                >
-                                    <p className={[
-                                        'text-slate-200 leading-relaxed text-lg',
-                                        isLong && !expanded ? 'line-clamp-4' : '',
-                                    ].join(' ')}>
-                                        {thought.content}
-                                    </p>
-                                </motion.div>
-                            </AnimatePresence>
+                            {/* Quote icon accent */}
+                            <Quote className="w-6 h-6 text-purple-500/30 mb-3" />
 
-                            {/* Fade overlay when collapsed */}
-                            {isLong && !expanded && (
-                                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none" />
-                            )}
+                            {/* Left accent bar wrapping the content */}
+                            <div className="border-l-2 border-purple-500/30 pl-4">
+                                <AnimatePresence initial={false} mode="wait">
+                                    <motion.div
+                                        key={expanded ? 'open' : 'closed'}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <p className={[
+                                            'text-slate-200 leading-relaxed text-lg',
+                                            isLong && !expanded ? 'line-clamp-4' : '',
+                                        ].join(' ')}>
+                                            {thought.content}
+                                        </p>
+                                    </motion.div>
+                                </AnimatePresence>
+
+                                {/* Fade overlay when collapsed */}
+                                {isLong && !expanded && (
+                                    <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-slate-900/90 to-transparent pointer-events-none" />
+                                )}
+                            </div>
                         </div>
 
-                        {/* Date + mood */}
-                        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-800/50">
-                            <time className="text-sm text-slate-500 font-mono">
+                        {/* Footer: date + mood */}
+                        <div className="flex items-center gap-3 mt-5 pt-4 border-t border-slate-800/60">
+                            <time className="text-xs text-slate-500 font-mono bg-slate-800/60 px-2 py-0.5 rounded-md border border-slate-700/40">
                                 {format(new Date(thought.created_at), 'MMM dd, yyyy')}
                             </time>
                             {thought.mood && (
-                                <span className="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                <span className="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 ml-auto">
                                     {thought.mood}
                                 </span>
                             )}
                         </div>
 
                     </div>
-                </GlowCard>
+                </div>
             </div>
         </motion.div>
     );
