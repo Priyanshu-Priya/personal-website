@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import { Brain } from 'lucide-react';
+import { Brain, ChevronDown } from 'lucide-react';
 import { GlowCard } from '@/components/ui/glow-card';
 import { GradientOrb } from '@/components/ui/aurora-background';
 import { TextReveal } from '@/components/ui/text-reveal';
@@ -19,36 +19,137 @@ interface ThoughtsListProps {
     thoughts: Thought[];
 }
 
+// Thoughts longer than this get collapsed by default
+const COLLAPSE_THRESHOLD = 300;
+
+// ─── Per-card component ────────────────────────────────────────────────────────
+function ThoughtCard({ thought, index }: { thought: Thought; index: number }) {
+    const isLong = thought.content.length > COLLAPSE_THRESHOLD;
+
+    /**
+     * Read window.location.hash synchronously in the useState initializer —
+     * runs at mount time before any useEffect fires, so the deep-linked card
+     * from the home screen is already open with zero timing gap.
+     */
+    const [expanded, setExpanded] = useState<boolean>(() => {
+        if (!isLong) return true;
+        if (typeof window === 'undefined') return false;
+        return window.location.hash === `#item-${thought.id}`;
+    });
+
+    const toggle = () => {
+        if (isLong) setExpanded(prev => !prev);
+    };
+
+    return (
+        <motion.div
+            id={`item-${thought.id}`}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="relative"
+        >
+            {/* Timeline dot */}
+            <motion.div
+                className="absolute -left-10 top-5 w-6 h-6 rounded-full bg-slate-900 border-2 border-purple-500/50 flex items-center justify-center"
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 + 0.2, type: 'spring' }}
+            >
+                <div className="w-2 h-2 rounded-full bg-purple-400" />
+            </motion.div>
+
+            {/* Entire card is the toggle target */}
+            <div onClick={toggle} className={isLong ? 'cursor-pointer select-none' : ''}>
+                <GlowCard glowColor="violet">
+                    <div className="p-6">
+
+                        {/* Content + ChevronDown for long thoughts */}
+                        <div className="relative">
+                            {isLong && (
+                                <motion.span
+                                    animate={{ rotate: expanded ? 180 : 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="absolute top-0 right-0 inline-flex shrink-0 text-purple-400/50 hover:text-purple-400 transition-colors"
+                                >
+                                    <ChevronDown className="w-4 h-4" />
+                                </motion.span>
+                            )}
+
+                            <AnimatePresence initial={false} mode="wait">
+                                <motion.div
+                                    key={expanded ? 'open' : 'closed'}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <p className={[
+                                        'text-slate-200 leading-relaxed text-lg',
+                                        isLong && !expanded ? 'line-clamp-4' : '',
+                                    ].join(' ')}>
+                                        {thought.content}
+                                    </p>
+                                </motion.div>
+                            </AnimatePresence>
+
+                            {/* Fade overlay when collapsed */}
+                            {isLong && !expanded && (
+                                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none" />
+                            )}
+                        </div>
+
+                        {/* Date + mood */}
+                        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-800/50">
+                            <time className="text-sm text-slate-500 font-mono">
+                                {format(new Date(thought.created_at), 'MMM dd, yyyy')}
+                            </time>
+                            {thought.mood && (
+                                <span className="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                    {thought.mood}
+                                </span>
+                            )}
+                        </div>
+
+                    </div>
+                </GlowCard>
+            </div>
+        </motion.div>
+    );
+}
+
+// ─── Main list component ───────────────────────────────────────────────────────
 export function ThoughtsList({ thoughts }: ThoughtsListProps) {
     const highlightedRef = useRef<string | null>(null);
 
     useEffect(() => {
         const hash = window.location.hash;
         if (!hash) return;
-        const targetId = hash.slice(1); // strip leading '#'
+        const targetId = hash.slice(1); // strip '#'
         const el = document.getElementById(targetId);
         if (!el) return;
-        // Small delay so framer-motion entrance animations don't fight scroll
+
+        // Delay slightly so Framer Motion entrance animations settle first
         const timer = setTimeout(() => {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // Add highlight ring then remove it
             el.classList.add('ring-2', 'ring-purple-400', 'ring-offset-2', 'ring-offset-slate-950', 'rounded-xl');
             highlightedRef.current = targetId;
-            const remove = setTimeout(() => {
+            const removeRing = setTimeout(() => {
                 el.classList.remove('ring-2', 'ring-purple-400', 'ring-offset-2', 'ring-offset-slate-950', 'rounded-xl');
             }, 2000);
-            return () => clearTimeout(remove);
+            return () => clearTimeout(removeRing);
         }, 600);
+
         return () => clearTimeout(timer);
     }, []);
 
     return (
         <main className="relative min-h-screen">
-            {/* Background orbs */}
             <GradientOrb className="-top-20 -right-20" color="violet" size="xl" />
             <GradientOrb className="bottom-1/4 -left-32" color="indigo" size="lg" />
 
-            {/* Noise texture */}
             <div
                 className="absolute inset-0 -z-10 pointer-events-none opacity-30"
                 style={{
@@ -70,11 +171,9 @@ export function ThoughtsList({ thoughts }: ThoughtsListProps) {
                         </div>
                         <span className="text-sm font-mono text-slate-500 uppercase tracking-wider">Library</span>
                     </div>
-
                     <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white">
                         <TextReveal text="Thoughts" delay={0.2} />
                     </h1>
-
                     <motion.p
                         className="text-xl text-slate-400 max-w-2xl"
                         initial={{ opacity: 0 }}
@@ -88,7 +187,6 @@ export function ThoughtsList({ thoughts }: ThoughtsListProps) {
                 {/* Timeline */}
                 {thoughts.length > 0 ? (
                     <div className="relative">
-                        {/* Timeline line */}
                         <motion.div
                             className="absolute left-3 top-0 bottom-0 w-px bg-gradient-to-b from-purple-500/50 via-violet-500/30 to-transparent"
                             initial={{ scaleY: 0 }}
@@ -96,47 +194,9 @@ export function ThoughtsList({ thoughts }: ThoughtsListProps) {
                             transition={{ duration: 1, ease: 'easeOut' }}
                             style={{ transformOrigin: 'top' }}
                         />
-
                         <div className="space-y-8 pl-10">
                             {thoughts.map((thought, index) => (
-                                <motion.div
-                                    key={thought.id}
-                                    id={`item-${thought.id}`}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    className="relative"
-                                >
-                                    {/* Timeline dot */}
-                                    <motion.div
-                                        className="absolute -left-10 top-5 w-6 h-6 rounded-full bg-slate-900 border-2 border-purple-500/50 flex items-center justify-center"
-                                        initial={{ scale: 0 }}
-                                        whileInView={{ scale: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: index * 0.1 + 0.2, type: 'spring' }}
-                                    >
-                                        <div className="w-2 h-2 rounded-full bg-purple-400" />
-                                    </motion.div>
-
-                                    <GlowCard glowColor="violet">
-                                        <div className="p-6">
-                                            <p className="text-slate-200 leading-relaxed text-lg">
-                                                {thought.content}
-                                            </p>
-                                            <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-800/50">
-                                                <time className="text-sm text-slate-500 font-mono">
-                                                    {format(new Date(thought.created_at), 'MMM dd, yyyy')}
-                                                </time>
-                                                {thought.mood && (
-                                                    <span className="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                                                        {thought.mood}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </GlowCard>
-                                </motion.div>
+                                <ThoughtCard key={thought.id} thought={thought} index={index} />
                             ))}
                         </div>
                     </div>
